@@ -17,7 +17,7 @@ new clientlang[MAXPLAYERS+1];
 
 #define MAX_PAINTS 800
 #define MAX_LANGUAGES 40
-#define MAX_TYPES 30
+#define MAX_TYPES 80
 
 enum Listados
 {
@@ -28,7 +28,7 @@ enum Listados
 	quality,
 	pattern,
 	String:flag[8],
-	String:type[32]
+	String:type[64]
 }
 
 Handle g_hTypesArray[MAX_LANGUAGES] = INVALID_HANDLE;
@@ -974,9 +974,9 @@ ReadPaints(index_new)
 	char code[64], language[128];
 	GetLanguageInfo(index_new, code, 64, language, 128);
 	
-	BuildPath(Path_SM, path_paints, sizeof(path_paints), "configs/csgo_wpaints_%s.cfg", language);
+	BuildPath(Path_SM, path_paints, sizeof(path_paints), "configs/franug_weaponpaints/csgo_wpaints_%s.cfg", language);
 	
-	if(!FileExists(path_paints)) BuildPath(Path_SM, path_paints, sizeof(path_paints), "configs/csgo_wpaints_english.cfg");
+	if(!FileExists(path_paints)) BuildPath(Path_SM, path_paints, sizeof(path_paints), "configs/franug_weaponpaints/csgo_wpaints_english.cfg");
 	
 	decl Handle:kv;
 	g_paintCount[index_new] = 1;
