@@ -72,7 +72,7 @@ new ismysql;
 new Handle:array_paints[MAX_LANGUAGES];
 new Handle:array_armas;
 
-#define DATA "5.0 private version"
+#define DATA "5.1 private version"
 
 //new String:base[64] = "weaponpaints";
 
@@ -719,7 +719,10 @@ public int SkinCategoryHandler(Handle menu, MenuAction action, int client, int i
 	if ( action == MenuAction_Select ) 
 	{
 		if (itemNum == 0)
+		{
 			ShowMenu(client, -3);
+			return;
+		}
 		
 		char szType[32];
 		GetArrayString(g_hTypesArray[clientlang[client]], itemNum-1, szType, sizeof(szType));		
@@ -1010,6 +1013,8 @@ ReadPaints(index_new)
 		g_paintCount[index_new]++;
 	} while (KvGotoNextKey(kv));
 	CloseHandle(kv);
+	
+	SortADTArray(g_hTypesArray[index_new], Sort_Ascending, Sort_String);
 	
 	if(menuw[index_new] != INVALID_HANDLE) CloseHandle(menuw[index_new]);
 	menuw[index_new] = INVALID_HANDLE;
