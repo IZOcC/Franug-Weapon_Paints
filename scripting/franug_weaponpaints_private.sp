@@ -4,12 +4,12 @@
 #include <sdkhooks>
 #include <multicolors>
 #include <givenameditem>
-#include <sm_franugknife>
 
 #define IDAYS 26
 
 #undef REQUIRE_PLUGIN
 #include <lastrequest>
+#include <sm_franugknife>
 
 new Handle:db;
 
@@ -71,7 +71,7 @@ new ismysql;
 new Handle:array_paints[MAX_LANGUAGES];
 new Handle:array_armas;
 
-#define DATA "6.0 private version"
+#define DATA "6.1 private version"
 
 //new String:base[64] = "weaponpaints";
 
@@ -92,7 +92,6 @@ public Plugin:myinfo =
 };
 
 new String:g_sCmdLogPath[256];
-
 
 public OnPluginStart()
 {
@@ -517,6 +516,7 @@ public OnClientDisconnect(client)
 public APLRes:AskPluginLoad2(Handle:myself, bool:late, String:error[], err_max)
 {
 	MarkNativeAsOptional("IsClientInLastRequest");
+	MarkNativeAsOptional("Franug_GetKnife");
 
 	return APLRes_Success;
 }
@@ -1105,7 +1105,15 @@ Restore(client, windex, String:Classname[64])
 	
 	if(knife)
 	{
-		GiveNamedItem_GiveKnife(client, Franug_GetKnife(client));
+		if(GetFeatureStatus(FeatureType_Native, "Franug_GetKnife") == FeatureStatus_Available) 
+			GiveNamedItem_GiveKnife(client, Franug_GetKnife(client));
+		else
+		{
+			RemovePlayerItem(client, windex);
+			AcceptEntityInput(windex, "Kill");
+	
+			GivePlayerItem(client, "weapon_knife");
+		}
 		return;
 	}
 	
