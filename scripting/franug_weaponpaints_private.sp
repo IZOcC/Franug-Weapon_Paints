@@ -3,6 +3,8 @@
 #include <cstrike>
 #include <sdkhooks>
 #include <multicolors>
+#include <givenameditem>
+#include <sm_franugknife>
 
 #define IDAYS 26
 
@@ -61,9 +63,6 @@ new bool:g_rmenu;
 new Handle:cvar_onlyadmin;
 new bool:onlyadmin;
 
-new Handle:cvar_zombiesv;
-new bool:zombiesv;
-
 new String:s_arma[MAXPLAYERS+1][64];
 new s_sele[MAXPLAYERS+1];
 
@@ -72,7 +71,7 @@ new ismysql;
 new Handle:array_paints[MAX_LANGUAGES];
 new Handle:array_armas;
 
-#define DATA "5.1 private version"
+#define DATA "6.0 private version"
 
 //new String:base[64] = "weaponpaints";
 
@@ -125,21 +124,18 @@ public OnPluginStart()
 	cvar_rtimer = CreateConVar("sm_weaponpaints_roundtimer", "20", "Time in seconds roundstart for can use the commands for change the paints. -1.0 = always can use the command");
 	cvar_rmenu = CreateConVar("sm_weaponpaints_rmenu", "1", "Re-open the menu when you select a option. 1 = enabled, 0 = disabled.");
 	cvar_onlyadmin = CreateConVar("sm_weaponpaints_onlyadmin", "1", "This feature is only for admins. 1 = enabled, 0 = disabled.");
-	cvar_zombiesv = CreateConVar("sm_weaponpaints_zombiesv", "1", "Enable this for prevent crashes in zombie servers. 1 = enabled, 0 = disabled.");
 	
 	g_c4 = GetConVarBool(cvar_c4);
 	g_saytimer = GetConVarInt(cvar_saytimer);
 	g_rtimer = GetConVarInt(cvar_rtimer);
 	g_rmenu = GetConVarBool(cvar_rmenu);
 	onlyadmin = GetConVarBool(cvar_onlyadmin);
-	zombiesv = GetConVarBool(cvar_zombiesv);
 	
 	HookConVarChange(cvar_c4, OnConVarChanged);
 	HookConVarChange(cvar_saytimer, OnConVarChanged);
 	HookConVarChange(cvar_rtimer, OnConVarChanged);
 	HookConVarChange(cvar_rmenu, OnConVarChanged);
 	HookConVarChange(cvar_onlyadmin, OnConVarChanged);
-	HookConVarChange(cvar_zombiesv, OnConVarChanged);
 	
 	int count = GetLanguageCount();
 	for (new i=0; i<count; i++)
@@ -317,16 +313,6 @@ public OnPluginStart()
 	Format(Items, 64, "knife_survival_bowie");
 	PushArrayString(array_armas, Items);
 	
-	for (new client = 1; client <= MaxClients; client++)
-	{
-		if (!IsClientInGame(client))
-			continue;
-			
-		OnClientPutInServer(client);
-		//CreateTimer(0.1, Timer_ClientLanguage, GetClientSerial(client), TIMER_FLAG_NO_MAPCHANGE);
-		
-	}
-	
 	ComprobarDB(true, "weaponpaints");
 }
 /*
@@ -417,10 +403,6 @@ public OnConVarChanged(Handle:convar, const String:oldValue[], const String:newV
 	else if (convar == cvar_onlyadmin)
 	{
 		onlyadmin = bool:StringToInt(newValue);
-	}
-	else if (convar == cvar_zombiesv)
-	{
-		zombiesv = bool:StringToInt(newValue);
 	}
 }
 
@@ -862,7 +844,7 @@ public DIDMenuHandler(Handle:menu, MenuAction:action, client, itemNum)
 				//ChangePaint(client, windex, Classname, weaponindex, true);
 				decl String:Classname2[64];
 				Format(Classname2, 64, "weapon_%s", Classname);
-				Restore(client, windex, Classname2, weaponindex);
+				Restore(client, windex, Classname2);
 				FakeClientCommand(client, "use %s", Classname2);
 				if(theindex == -1) CPrintToChat(client, " {green}[WP]{default} %T","You have choose your default paint for your",client, Classname);
 				else if(theindex == 0) CPrintToChat(client, " {green}[WP]{default} %T","You have choose a random paint for your",client, Classname);
@@ -1100,7 +1082,7 @@ stock SetReserveAmmo(weapon, ammo)
 	//PrintToChatAll("fijar es %i", ammo);
 } 
 
-Restore(client, windex, String:Classname[64], weaponindex)
+Restore(client, windex, String:Classname[64])
 {
 	new bool:knife = false;
 	if(StrContains(Classname, "weapon_knife", false) == 0 || StrContains(Classname, "weapon_bayonet", false) == 0) 
@@ -1108,111 +1090,74 @@ Restore(client, windex, String:Classname[64], weaponindex)
 		knife = true;
 	}
 	
+	if(knife)
+	{
+		GiveNamedItem_GiveKnife(client, Franug_GetKnife(client));
+		return;
+	}
+	
 	//PrintToChat(client, "weapon %s", Classname);
 	new ammo, clip;
-	if(!knife)
-	{
-		ammo = GetReserveAmmo(windex);
-		clip = GetEntProp(windex, Prop_Send, "m_iClip1");
-	}
+	ammo = GetReserveAmmo(windex);
+	clip = GetEntProp(windex, Prop_Send, "m_iClip1");
+	
 	RemovePlayerItem(client, windex);
 	AcceptEntityInput(windex, "Kill");
 	
-	new entity;
-	if(zombiesv && knife) GivePlayerItem(client, "weapon_knife");
-	else entity = GivePlayerItem(client, Classname);
-	
-	if(knife)
-	{
-		if (weaponindex != 42 && weaponindex != 59 && !zombiesv) 
-			EquipPlayerWeapon(client, entity);
-	}
-	else
-	{
-		SetReserveAmmo(entity, ammo);
-		SetEntProp(entity, Prop_Send, "m_iClip1", clip);
-	}
+	new entity = GivePlayerItem(client, Classname);
+
+	SetReserveAmmo(entity, ammo);
+	SetEntProp(entity, Prop_Send, "m_iClip1", clip);
 }
 
-ChangePaint(entity, theindex, client)
+public OnGiveNamedItemEx(int client, const char[] Classname)
 {
-	if(theindex == 0)
+	if (StrContains(Classname, "weapon_") != 0)
+		return;
+
+	if (IsFakeClient(client))
+		return;
+		
+	int itemdefinition = GiveNamedItemEx.GetItemDefinitionByClassname(Classname);
+	
+	if (itemdefinition == -1)
+		return;
+		
+	if(onlyadmin && GetUserAdmin(client) == INVALID_ADMIN_ID) return;
+		
+	
+	if(StrEqual(Classname, "weapon_taser") || (!g_c4 && StrEqual(Classname, "weapon_c4")))
 	{
-		theindex = GetRandomInt(1, g_paintCount[clientlang[client]]-1);
+		return;
 	}
-	else if(theindex == -1) return;
+	char classnamet[64];
+	Format(classnamet, 64, Classname);
+	ReplaceString(classnamet, 64, "weapon_", "");
+
+	if(itemdefinition == 42 || itemdefinition == 59)
+	{
+		return;
+	}
+
+	if(arbol[client] == INVALID_HANDLE) return;
+	new valor = 0;
+	if(!GetTrieValue(arbol[client], classnamet, valor)) return;
+	if(valor == -1 || (valor != 0 && g_paints[clientlang[client]][valor][index] == 0)) return;
+	
+	if(valor == 0)
+	{
+		valor = GetRandomInt(1, g_paintCount[clientlang[client]]-1);
+	}
+	else if(valor == -1) return;
 	
 /* 	new m_iItemIDHigh = GetEntProp(entity, Prop_Send, "m_iItemIDHigh");
 	new m_iItemIDLow = GetEntProp(entity, Prop_Send, "m_iItemIDLow"); */
-
-	SetEntProp(entity,Prop_Send,"m_iItemIDLow",-1);
-	//SetEntProp(entity,Prop_Send,"m_iItemIDHigh",0);
-
-	SetEntProp(entity,Prop_Send,"m_nFallbackPaintKit",g_paints[clientlang[client]][theindex][index]);
-	if(g_paints[clientlang[client]][theindex][wear] >= 0.0) SetEntPropFloat(entity,Prop_Send,"m_flFallbackWear",g_paints[clientlang[client]][theindex][wear]);
-	if(g_paints[clientlang[client]][theindex][pattern] >= 0) SetEntProp(entity,Prop_Send,"m_nFallbackSeed",g_paints[clientlang[client]][theindex][pattern]);
-	if(g_paints[clientlang[client]][theindex][stattrak] != -2) SetEntProp(entity,Prop_Send,"m_nFallbackStatTrak",g_paints[clientlang[client]][theindex][stattrak]);
-	if(g_paints[clientlang[client]][theindex][quality] != -2) SetEntProp(entity,Prop_Send,"m_iEntityQuality",g_paints[clientlang[client]][theindex][quality]);
+	GiveNamedItemEx.Paintkit = g_paints[clientlang[client]][valor][index];
 	
-/* 	new Handle:pack;
-
-	CreateDataTimer(0.2, RestoreItemID, pack);
-	WritePackCell(pack,EntIndexToEntRef(entity));
-	WritePackCell(pack,m_iItemIDHigh);
-	WritePackCell(pack,m_iItemIDLow); */
-}
-
-public OnClientPutInServer(client)
-{
-	//CreateTimer(1.0, Timer_ClientLanguage, GetClientSerial(client), TIMER_FLAG_NO_MAPCHANGE);
-	//checked[client] = false;
-	if(!IsFakeClient(client)) SDKHook(client, SDKHook_WeaponEquipPost, OnPostWeaponEquip);
-}
-
-public Action:OnPostWeaponEquip(client, weapon)
-{
-	if(onlyadmin && GetUserAdmin(client) == INVALID_ADMIN_ID) return;
-	
-	if(weapon < 1 || !IsValidEdict(weapon) || !IsValidEntity(weapon)) return;
-	
-	if (GetEntProp(weapon, Prop_Send, "m_hPrevOwner") > 0)
-		return;
-		
-	decl String:Classname[64];
-	if(!GetEdictClassname(weapon, Classname, 64) || StrEqual(Classname, "weapon_taser") || (!g_c4 && StrEqual(Classname, "weapon_c4")))
-	{
-		return;
-	}
-	ReplaceString(Classname, 64, "weapon_", "");
-	new weaponindex = GetEntProp(weapon, Prop_Send, "m_iItemDefinitionIndex");
-	if(weaponindex == 42 || weaponindex == 59)
-	{
-		return;
-	}
-
-	switch (weaponindex)
-	{
-		case 60: strcopy(Classname, 64, "m4a1_silencer");
-		case 61: strcopy(Classname, 64, "usp_silencer");
-		case 63: strcopy(Classname, 64, "cz75a");
-		case 500: strcopy(Classname, 64, "bayonet");
-		case 506: strcopy(Classname, 64, "knife_gut");
-		case 505: strcopy(Classname, 64, "knife_flip");
-		case 508: strcopy(Classname, 64, "knife_m9_bayonet");
-		case 507: strcopy(Classname, 64, "knife_karambit");
-		case 509: strcopy(Classname, 64, "knife_tactical");
-		case 515: strcopy(Classname, 64, "knife_butterfly");
-		case 512: strcopy(Classname, 64, "knife_falchion");
-		case 516: strcopy(Classname, 64, "knife_push");
-		case 64: strcopy(Classname, 64, "revolver");
-		case 514: strcopy(Classname, 64, "knife_survival_bowie");
-	}
-	if(arbol[client] == INVALID_HANDLE) return;
-	new valor = 0;
-	if(!GetTrieValue(arbol[client], Classname, valor)) return;
-	if(valor == -1 || (valor != 0 && g_paints[clientlang[client]][valor][index] == 0)) return;
-	//PrintToChat(client, "prueba");
-	ChangePaint(weapon, valor, client);
+	if(g_paints[clientlang[client]][valor][wear] >= 0.0) GiveNamedItemEx.Wear = g_paints[clientlang[client]][valor][wear];
+	if(g_paints[clientlang[client]][valor][pattern] >= 0) GiveNamedItemEx.Seed = g_paints[clientlang[client]][valor][pattern];
+	if(g_paints[clientlang[client]][valor][stattrak] != -2) GiveNamedItemEx.Kills = g_paints[clientlang[client]][valor][stattrak];
+	if(g_paints[clientlang[client]][valor][quality] != -2) GiveNamedItemEx.EntityQuality = g_paints[clientlang[client]][valor][quality];
 }
 
 SaveCookies(client)
@@ -1399,7 +1344,7 @@ Renovar(client)
 			{
 				GetEdictClassname(weaponIndex, classname, 64);
 				
-				Restore(client, weaponIndex, classname, GetEntProp(weaponIndex, Prop_Send, "m_iItemDefinitionIndex"));
+				Restore(client, weaponIndex, classname);
 			}
 		}
 	}
