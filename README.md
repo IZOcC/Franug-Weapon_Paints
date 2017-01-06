@@ -3,6 +3,7 @@
 * Don't sell or give this to others or publish this private version or you will be out from the next updates.
 
 ### Installation:
+* Install required plugin: https://www.dropbox.com/s/dygllegwqy6e0rr/franug%20givenameditem%203.0.0.zip?dl=0
 * Disable "FollowCSGOServerGuidelines" option. In addons/sourcemod/configs/core.cfg write this line in the end ```FollowCSGOServerGuidelines "no"```
 * Dont use your own tokens. Use this website https://csgo.tokenstash.com
 * Unzip file in addons/sourcemod/
@@ -10,7 +11,7 @@
 * You dont need to upload the .sp file
 * If you already use a old version. Remove your database content and start since 0
 * A example of a basic databases.cfg is http://pastebin.com/XqsEjPhS
-* If you want a !knife plugin you can use this: https://github.com/Franc1sco/Franug-Knifes
+* If you want a !knife plugin you need to use the private knife version, if you still dont have it, then buy it from me (Franc1sco franug)
 
 
 ##### Cvars (put in server.cfg)
