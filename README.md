@@ -3,7 +3,7 @@
 * Don't sell or give this to others or publish this private version or you will be out from the next updates.
 
 ### Installation:
-* Install required plugin: https://www.dropbox.com/s/dygllegwqy6e0rr/franug%20givenameditem%203.0.0.zip?dl=0
+* Install required plugin: https://gitlab.com/Franc1sco/Franug-GiveNamedItem (if you dont have access, then send a email to franug13@gmail.com with your gitlab email and paypal account that you use to pay this plugin)
 * Disable "FollowCSGOServerGuidelines" option. In addons/sourcemod/configs/core.cfg write this line in the end ```FollowCSGOServerGuidelines "no"```
 * Dont use your own tokens. Use this website https://csgo.tokenstash.com
 * Unzip file in addons/sourcemod/
