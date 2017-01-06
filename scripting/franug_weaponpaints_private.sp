@@ -93,6 +93,7 @@ public Plugin:myinfo =
 
 new String:g_sCmdLogPath[256];
 
+
 public OnPluginStart()
 {
  	for(new i=0;;i++)
@@ -315,6 +316,18 @@ public OnPluginStart()
 	
 	ComprobarDB(true, "weaponpaints");
 }
+
+public OnPluginEnd()
+{
+	for (new client = 1; client <= MaxClients; client++)
+	{
+		if (!IsClientInGame(client))
+			continue;
+			
+		OnClientDisconnect(client);
+	}
+}
+
 /*
 public OnClientPostAdminCheck(client)
 {
@@ -1259,13 +1272,14 @@ public T_CheckSteamID(Handle:owner, Handle:hndl, const String:error[], any:data)
 	
 	new String:temp[64];
 	new contar = 3;
+	//PrintToChat(client, "pasado");
 	for(new i=0;i<GetArraySize(array_armas);++i)
 	{
 		GetArrayString(array_armas, i, Items, 64);
 		SQL_FetchString(hndl, contar, temp, 64);
 		SetTrieValue(arbol[client], Items, FindStringInArray(array_paints[clientlang[client]], temp));
 		
-		//LogMessage("Sacado %i del arma %s", FindStringInArray(array_paints, temp),Items);
+		//PrintToChat(client, "Sacado %i del arma %s", FindStringInArray(array_paints[clientlang[client]], temp),Items);
 		
 		contar++;
 	}
