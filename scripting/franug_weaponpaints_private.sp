@@ -71,7 +71,7 @@ new ismysql;
 new Handle:array_paints[MAX_LANGUAGES];
 new Handle:array_armas;
 
-#define DATA "6.1 private version"
+#define DATA "6.2 private version"
 
 //new String:base[64] = "weaponpaints";
 
@@ -1151,14 +1151,25 @@ public OnGiveNamedItemEx(int client, const char[] Classname)
 	{
 		return;
 	}
-	char classnamet[64];
-	Format(classnamet, 64, Classname);
-	ReplaceString(classnamet, 64, "weapon_", "");
-
-	if(itemdefinition == 42 || itemdefinition == 59)
+	if(GiveNamedItemEx.IsClassnameKnife(Classname))
 	{
-		return;
+		if(GetFeatureStatus(FeatureType_Native, "Franug_GetKnife") == FeatureStatus_Available) 
+		{
+			itemdefinition = Franug_GetKnife(client);
+			if(itemdefinition < 2)
+				return;
+		}
+	
+		if(itemdefinition == 42 || itemdefinition == 59)
+		{
+			return;
+		}
 	}
+	
+	char classnamet[64];
+	//Format(classnamet, 64, Classname);
+	GiveNamedItemEx.GetClassnameByItemDefinition(itemdefinition, classnamet, 64);
+	ReplaceString(classnamet, 64, "weapon_", "");
 
 	if(arbol[client] == INVALID_HANDLE) return;
 	new valor = 0;
