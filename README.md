@@ -23,3 +23,10 @@ sm_weaponpaints_rmenu "1" // Re-open the menu when you select a option. 1 = enab
 sm_weaponpaints_onlyadmin "0" // This feature is only for admins. 1 = enabled, 0 = disabled. (Use the value 1 and try to keep this plugin secret for the normal users because they can report it)
 sm_weaponpaints_zombiesv "1" // Enable this for prevent crashes in zombie and 1v1 servers for knifes. 1 = enabled, 0 = disabled. (Use the value 1 if you use my knife plugin)
 ```
+
+### Commands
+```
+sm_ws sm_wskins sm_paints buyammo1 - open the main menu
+sm_reloadwskins - reload cfg (root access)
+sm_wsremove <steamid> - remove a steamid from the DB (root access)
+```
