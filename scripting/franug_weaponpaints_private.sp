@@ -71,7 +71,7 @@ new ismysql;
 new Handle:array_paints[MAX_LANGUAGES];
 new Handle:array_armas;
 
-#define DATA "6.2 private version"
+#define DATA "6.3 private version"
 
 //new String:base[64] = "weaponpaints";
 
@@ -118,6 +118,7 @@ public OnPluginStart()
 	RegConsoleCmd("sm_paints", GetSkins);
 	
 	RegAdminCmd("sm_reloadwskins", ReloadSkins, ADMFLAG_ROOT);
+	RegAdminCmd("sm_wsremove", RemoveSkins, ADMFLAG_ROOT);
 	
 	cvar_c4 = CreateConVar("sm_weaponpaints_c4", "1", "Enable or disable that people can apply paints to the C4. 1 = enabled, 0 = disabled");
 	cvar_saytimer = CreateConVar("sm_weaponpaints_saytimer", "10", "Time in seconds for block that show the plugin commands in chat when someone type a command. -1.0 = never show the commands in chat");
@@ -538,6 +539,24 @@ public OnLibraryRemoved(const String:name[])
 	
 	
 }
+
+public Action:RemoveSkins(client, args)
+{	
+	decl String:buffer[1024];
+	char steamid[64];
+	GetCmdArg(1, steamid, 64);
+	if (ismysql == 1)
+		Format(buffer, sizeof(buffer), "DELETE FROM `weaponpaints` WHERE `steamid` = '%s';", steamid);
+	else
+		Format(buffer, sizeof(buffer), "DELETE FROM weaponpaints WHERE steamid = '%s';", steamid);
+
+	LogToFileEx(g_sCmdLogPath, "Query %s", buffer);
+	SQL_TQuery(db, tbasicoPRemoved, buffer, GetClientUserId(client));
+	
+	
+	return Plugin_Handled;
+}
+
 
 public Action:ReloadSkins(client, args)
 {	
@@ -1361,6 +1380,24 @@ public T_CheckSteamID(Handle:owner, Handle:hndl, const String:error[], any:data)
 	} */
 	Renovar(client);
 
+}
+
+public tbasicoPRemoved(Handle:owner, Handle:hndl, const String:error[], any:data)
+{
+	new client;
+ 
+	/* Make sure the client didn't disconnect while the thread was running */
+	if ((client = GetClientOfUserId(data)) == 0)
+	{
+		return;
+	}
+	if (hndl == INVALID_HANDLE)
+	{
+		ComprobarDB();
+		return;
+	}
+	
+	PrintToChat(client, "Client deleted");
 }
 
 Renovar(client)
