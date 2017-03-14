@@ -141,9 +141,9 @@ public OnPluginStart()
 	
 	cvar_c4 = CreateConVar("sm_weaponpaints_c4", "1", "Enable or disable that people can apply paints to the C4. 1 = enabled, 0 = disabled");
 	cvar_saytimer = CreateConVar("sm_weaponpaints_saytimer", "10", "Time in seconds for block that show the plugin commands in chat when someone type a command. -1.0 = never show the commands in chat");
-	cvar_rtimer = CreateConVar("sm_weaponpaints_roundtimer", "20", "Time in seconds roundstart for can use the commands for change the paints. -1.0 = always can use the command");
+	cvar_rtimer = CreateConVar("sm_weaponpaints_roundtimer", "-1.0", "Time in seconds roundstart for can use the commands for change the paints. -1.0 = always can use the command");
 	cvar_rmenu = CreateConVar("sm_weaponpaints_rmenu", "1", "Re-open the menu when you select a option. 1 = enabled, 0 = disabled.");
-	cvar_onlyadmin = CreateConVar("sm_weaponpaints_onlyadmin", "1", "This feature is only for admins. 1 = enabled, 0 = disabled.");
+	cvar_onlyadmin = CreateConVar("sm_weaponpaints_onlyadmin", "0", "This feature is only for admins. 1 = enabled, 0 = disabled.");
 	
 	g_c4 = GetConVarBool(cvar_c4);
 	g_saytimer = GetConVarInt(cvar_saytimer);
