@@ -90,7 +90,7 @@ new ismysql;
 new Handle:array_paints[MAX_LANGUAGES];
 new Handle:array_armas;
 
-#define DATA "6.3 private version"
+#define DATA "6.4 private version"
 
 //new String:base[64] = "weaponpaints";
 
@@ -438,10 +438,16 @@ public OnConVarChanged(Handle:convar, const String:oldValue[], const String:newV
 	}
 }
 
-public void OnConfigsExecuted() {
+public void OnMapStart() {
+	
+	CreateTimer(3.0, valveserver, _, TIMER_FLAG_NO_MAPCHANGE);
+} 
+
+public Action valveserver(Handle timer)
+{
 	GameRules_SetProp("m_bIsValveDS", 1);
 	GameRules_SetProp("m_bIsQuestEligible", 1);
-} 
+}
 
 ComprobarDB(bool:reconnect = false,String:basedatos[64] = "weaponpaints")
 {
