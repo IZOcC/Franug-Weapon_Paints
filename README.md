@@ -30,3 +30,7 @@ sm_ws sm_wskins sm_paints buyammo1 - open the main menu
 sm_reloadwskins - reload cfg (root access)
 sm_wsremove <steamid> - remove a steamid from the DB (root access)
 ```
+
+
+## Follow the rules here: https://github.com/Franc1sco/Franug-PRIVATE-PLUGINS
+## Dont forget to give me +rep in my steam profile ( http://steamcommunity.com/id/franug ) if you like my plugins :)
