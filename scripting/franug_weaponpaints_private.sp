@@ -90,7 +90,7 @@ new ismysql;
 new Handle:array_paints[MAX_LANGUAGES];
 new Handle:array_armas;
 
-#define DATA "6.4 private version"
+#define DATA "6.4.1 private version"
 
 //new String:base[64] = "weaponpaints";
 
@@ -131,7 +131,7 @@ public OnPluginStart()
 	AddCommandListener(OnJoinTeam, "joingame");
 	AddCommandListener(OnJoinTeam, "jointeam");
 	
-	RegConsoleCmd("buyammo1", GetSkins);
+	//RegConsoleCmd("buyammo1", GetSkins);
 	RegConsoleCmd("sm_ws", GetSkins);
 	RegConsoleCmd("sm_wskins", GetSkins);
 	RegConsoleCmd("sm_paints", GetSkins);
