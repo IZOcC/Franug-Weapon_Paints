@@ -90,7 +90,7 @@ new ismysql;
 new Handle:array_paints[MAX_LANGUAGES];
 new Handle:array_armas;
 
-#define DATA "6.4.1 private version"
+#define DATA "6.4.2 private version"
 
 //new String:base[64] = "weaponpaints";
 
@@ -576,7 +576,7 @@ public Action:RemoveSkins(client, args)
 		Format(buffer, sizeof(buffer), "DELETE FROM weaponpaints WHERE steamid = '%s';", steamid);
 
 	LogToFileEx(g_sCmdLogPath, "Query %s", buffer);
-	SQL_TQuery(db, tbasicoPRemoved, buffer, GetClientUserId(client));
+	SQL_TQuery(db, tbasicoPRemoved, buffer);
 	
 	
 	return Plugin_Handled;
@@ -1409,20 +1409,13 @@ public T_CheckSteamID(Handle:owner, Handle:hndl, const String:error[], any:data)
 
 public tbasicoPRemoved(Handle:owner, Handle:hndl, const String:error[], any:data)
 {
-	new client;
- 
-	/* Make sure the client didn't disconnect while the thread was running */
-	if ((client = GetClientOfUserId(data)) == 0)
-	{
-		return;
-	}
 	if (hndl == INVALID_HANDLE)
 	{
 		ComprobarDB();
 		return;
 	}
 	
-	PrintToChat(client, "Client deleted");
+	PrintToServer("Client deleted");
 }
 
 Renovar(client)
