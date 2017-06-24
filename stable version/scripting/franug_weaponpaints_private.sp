@@ -49,7 +49,7 @@ enum Listados
 	quality,
 	pattern,
 	String:flag[8],
-	String:type[64]
+	String:type[128]
 }
 
 Handle g_hTypesArray[MAX_LANGUAGES] = INVALID_HANDLE;
@@ -90,7 +90,7 @@ new ismysql;
 new Handle:array_paints[MAX_LANGUAGES];
 new Handle:array_armas;
 
-#define DATA "6.4.2 private version"
+#define DATA "6.5 private version"
 
 //new String:base[64] = "weaponpaints";
 
@@ -157,9 +157,6 @@ public OnPluginStart()
 	HookConVarChange(cvar_rmenu, OnConVarChanged);
 	HookConVarChange(cvar_onlyadmin, OnConVarChanged);
 	
-	int count = GetLanguageCount();
-	for (new i=0; i<count; i++)
-		ReadPaints(i);
 	
 	new String:Items[64];
 	
@@ -333,6 +330,10 @@ public OnPluginStart()
 	Format(Items, 64, "knife_survival_bowie");
 	PushArrayString(array_armas, Items);
 	
+	int count = GetLanguageCount();
+	for (new i=0; i<count; i++)
+		ReadPaints(i);
+		
 	ComprobarDB(true, "weaponpaints");
 }
 
@@ -1043,15 +1044,21 @@ ReadPaints(index_new)
 		g_paints[index_new][g_paintCount[index_new]][quality] = KvGetNum(kv, "quality", 3);
 		g_paints[index_new][g_paintCount[index_new]][pattern] = KvGetNum(kv, "pattern", 0);
 		KvGetString(kv, "flag", g_paints[index_new][g_paintCount[index_new]][flag], 8, "0");
-		KvGetString(kv, "type", g_paints[index_new][g_paintCount[index_new]][type], 11, "None");
+		KvGetString(kv, "type", g_paints[index_new][g_paintCount[index_new]][type], 128, "None");
 		
-		if (FindStringInArray(g_hTypesArray[index_new], g_paints[index_new][g_paintCount[index_new]][type]) == -1)
-			PushArrayString(g_hTypesArray[index_new], g_paints[index_new][g_paintCount[index_new]][type]);
 
 		PushArrayString(array_paints[index_new], g_paints[index_new][g_paintCount[index_new]][Nombre]);
 		g_paintCount[index_new]++;
 	} while (KvGotoNextKey(kv));
 	CloseHandle(kv);
+	
+	
+	char w_temp[64];
+	for (new i=1; i<GetArraySize(array_armas); ++i)
+	{
+		GetArrayString(array_armas, i, w_temp, 64);
+		PushArrayString(g_hTypesArray[index_new], w_temp);
+	}
 	
 	SortADTArray(g_hTypesArray[index_new], Sort_Ascending, Sort_String);
 	
@@ -1091,7 +1098,7 @@ ReadPaints(index_new)
 	
 	for (int i; i < GetArraySize(g_hTypesArray[index_new]); i++)
 	{
-		char szType[32];
+		char szType[128];
 		GetArrayString(g_hTypesArray[index_new], i, szType, sizeof(szType));
 		
 		g_hTypesMenu[index_new][i] = INVALID_HANDLE;
@@ -1103,7 +1110,7 @@ ReadPaints(index_new)
 		for (int j = 1; j < g_paintCount[index_new]; ++j)
 		{
 			Format(item, 4, "%i", j);
-			if (StrEqual(g_paints[index_new][j][type], szType))
+			if (StrContains(g_paints[index_new][j][type], szType) != -1)
 				AddMenuItem(g_hTypesMenu[index_new][i], item, g_paints[index_new][j][Nombre]);
 		}
 	}	
@@ -1313,7 +1320,7 @@ public T_CheckSteamID(Handle:owner, Handle:hndl, const String:error[], any:data)
 	new client;
  
 	/* Make sure the client didn't disconnect while the thread was running */
-	if ((client = GetClientOfUserId(data)) == 0)
+	if ((client = GetClientOfUserId(data)) == 0 || !IsClientInGame(client))
 	{
 		return;
 	}
