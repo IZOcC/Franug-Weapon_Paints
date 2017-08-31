@@ -91,7 +91,7 @@ new ismysql;
 new Handle:array_paints[MAX_LANGUAGES];
 new Handle:array_armas;
 
-#define DATA "6.6.2 private version"
+#define DATA "6.6.3 private version"
 
 //new String:base[64] = "weaponpaints";
 
@@ -656,6 +656,7 @@ ShowMenuM(client)
 	AddMenuItem(menu2, "2", tdisplay);
 	
 	if(CommandExists("sm_st")) AddMenuItem(menu2, "3", "Stattrak technology");
+	if(CommandExists("sm_nametag")) AddMenuItem(menu2, "4", "Nametag");
 	
 	//Format(tdisplay, sizeof(tdisplay), "%T", "Favorite paints", client);
 	//AddMenuItem(menu2, "3", tdisplay);
@@ -754,6 +755,7 @@ public DIDMenuHandler_2(Handle:menu, MenuAction:action, client, itemNum)
 		if(theindex == 1) ShowMenu(client, 0);
 		else if(theindex == 2 && comprobado41[client]) ShowMenuArmas(client, 0);
 		else if(theindex == 3) FakeClientCommand(client, "sm_st");
+		else if(theindex == 4) FakeClientCommand(client, "sm_nametag");
 		//else if(theindex == 3) ShowMenuFav(client);
 	}
 	else if (action == MenuAction_End)
