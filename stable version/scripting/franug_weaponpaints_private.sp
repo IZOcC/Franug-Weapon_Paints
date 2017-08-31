@@ -27,6 +27,7 @@
 #define IDAYS 26
 
 #undef REQUIRE_PLUGIN
+#include <franug_stattrak>
 #include <lastrequest>
 #include <sm_franugknife>
 
@@ -90,7 +91,7 @@ new ismysql;
 new Handle:array_paints[MAX_LANGUAGES];
 new Handle:array_armas;
 
-#define DATA "6.5 private version"
+#define DATA "6.5.2 private version"
 
 //new String:base[64] = "weaponpaints";
 
@@ -544,7 +545,9 @@ public APLRes:AskPluginLoad2(Handle:myself, bool:late, String:error[], err_max)
 {
 	MarkNativeAsOptional("IsClientInLastRequest");
 	MarkNativeAsOptional("Franug_GetKnife");
-
+	MarkNativeAsOptional("Franug_GetStattrakCount");
+	MarkNativeAsOptional("Franug_GetStattrakStatus");
+	
 	return APLRes_Success;
 }
 
@@ -1239,7 +1242,16 @@ public OnGiveNamedItemEx(int client, const char[] Classname)
 	
 	if(g_paints[clientlang[client]][valor][wear] >= 0.0) GiveNamedItemEx.Wear = g_paints[clientlang[client]][valor][wear];
 	if(g_paints[clientlang[client]][valor][pattern] >= 0) GiveNamedItemEx.Seed = g_paints[clientlang[client]][valor][pattern];
-	if(g_paints[clientlang[client]][valor][stattrak] != -2) GiveNamedItemEx.Kills = g_paints[clientlang[client]][valor][stattrak];
+	
+	if(!CommandExists("sm_st"))
+	{
+		if(g_paints[clientlang[client]][valor][stattrak] != -2) GiveNamedItemEx.Kills = g_paints[clientlang[client]][valor][stattrak];
+	}
+	else if(Franug_GetStattrakCount(client, classnamet) == -1)
+	{
+		if(g_paints[clientlang[client]][valor][stattrak] != -2) GiveNamedItemEx.Kills = g_paints[clientlang[client]][valor][stattrak];
+	}
+	
 	if(g_paints[clientlang[client]][valor][quality] != -2) GiveNamedItemEx.EntityQuality = g_paints[clientlang[client]][valor][quality];
 }
 
