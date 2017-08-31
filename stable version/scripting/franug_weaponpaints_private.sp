@@ -91,7 +91,7 @@ new ismysql;
 new Handle:array_paints[MAX_LANGUAGES];
 new Handle:array_armas;
 
-#define DATA "6.5.2 private version"
+#define DATA "6.6 private version"
 
 //new String:base[64] = "weaponpaints";
 
@@ -654,6 +654,9 @@ ShowMenuM(client)
 	AddMenuItem(menu2, "1", tdisplay);
 	Format(tdisplay, sizeof(tdisplay), "%T", "Select paint for each weapon", client);
 	AddMenuItem(menu2, "2", tdisplay);
+	
+	if(CommandExists("sm_st")) AddMenuItem(menu2, "sm_st", "Stattrak technology");
+	
 	//Format(tdisplay, sizeof(tdisplay), "%T", "Favorite paints", client);
 	//AddMenuItem(menu2, "3", tdisplay);
 	
@@ -746,6 +749,11 @@ public DIDMenuHandler_2(Handle:menu, MenuAction:action, client, itemNum)
 		decl String:info[4];
 		
 		GetMenuItem(menu, itemNum, info, sizeof(info));
+		if(StrEqual(info, "sm_st"))
+		{
+			FakeClientCommand(client, info);
+			return;
+		}
 		new theindex = StringToInt(info);
 		if(theindex == 1) ShowMenu(client, 0);
 		else if(theindex == 2 && comprobado41[client]) ShowMenuArmas(client, 0);
@@ -1246,13 +1254,13 @@ public OnGiveNamedItemEx(int client, const char[] Classname)
 	if(!CommandExists("sm_st"))
 	{
 		if(g_paints[clientlang[client]][valor][stattrak] != -2) GiveNamedItemEx.Kills = g_paints[clientlang[client]][valor][stattrak];
+		if(g_paints[clientlang[client]][valor][quality] != -2) GiveNamedItemEx.EntityQuality = g_paints[clientlang[client]][valor][quality];
 	}
 	else if(Franug_GetStattrakCount(client, classnamet) == -1)
 	{
 		if(g_paints[clientlang[client]][valor][stattrak] != -2) GiveNamedItemEx.Kills = g_paints[clientlang[client]][valor][stattrak];
+		if(g_paints[clientlang[client]][valor][quality] != -2) GiveNamedItemEx.EntityQuality = g_paints[clientlang[client]][valor][quality];
 	}
-	
-	if(g_paints[clientlang[client]][valor][quality] != -2) GiveNamedItemEx.EntityQuality = g_paints[clientlang[client]][valor][quality];
 }
 
 SaveCookies(client)
