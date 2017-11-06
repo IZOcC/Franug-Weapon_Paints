@@ -91,7 +91,7 @@ new ismysql;
 new Handle:array_paints[MAX_LANGUAGES];
 new Handle:array_armas;
 
-#define DATA "6.6.4 private version"
+#define DATA "6.6.5 private version"
 
 //new String:base[64] = "weaponpaints";
 
@@ -1242,8 +1242,17 @@ public OnGiveNamedItemEx(int client, const char[] Classname)
 	if(valor == 0)
 	{
 		valor = GetRandomInt(1, g_paintCount[clientlang[client]]-1);
+		while (!CheckCommandAccess(client, "weaponpaints_override", ReadFlagString(g_paints[clientlang[client]][valor][flag]), true))
+		{
+			valor++;
+			if(valor >= g_paintCount[clientlang[client]])
+				valor = 1;
+		}
+		
 	}
 	else if(valor == -1) return;
+	
+	if (!CheckCommandAccess(client, "weaponpaints_override", ReadFlagString(g_paints[clientlang[client]][valor][flag]), true))return;
 	
 /* 	new m_iItemIDHigh = GetEntProp(entity, Prop_Send, "m_iItemIDHigh");
 	new m_iItemIDLow = GetEntProp(entity, Prop_Send, "m_iItemIDLow"); */
