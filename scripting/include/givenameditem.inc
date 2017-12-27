@@ -43,6 +43,7 @@ native GiveNamedItem_SetTeamSwitch(bool value);
 
 native GiveNamedItem_GetAccountID();
 native GiveNamedItem_SetAccountID(int value);
+native GiveNamedItem_SetNameTag(char[] nametag);
 
 native int GiveNamedItem_GetItemDefinitionByClassname(const char[] classname);
 native bool GiveNamedItem_GetClassnameByItemDefinition(int itemdefinition, char[] buffer, int length);
