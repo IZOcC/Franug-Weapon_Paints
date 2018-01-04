@@ -91,7 +91,7 @@ new ismysql;
 new Handle:array_paints[MAX_LANGUAGES];
 new Handle:array_armas;
 
-#define DATA "6.7.0 private version"
+#define DATA "6.7.1 private version"
 
 //new String:base[64] = "weaponpaints";
 
@@ -397,6 +397,7 @@ public Action:Timer_ClientLanguage(Handle:timer, any:serial)
 	{
 		//if(!checked[client])
 		//{
+			clientlang[client] = GetClientLanguage(client);
 			CheckSteamID(client);
 			//checked[client] = true;
 		//}
@@ -409,6 +410,7 @@ public Action OnJoinTeam(int client, const char[] command, int args)
 {
 	if (chooset[client])return;
 	
+	clientlang[client] = GetClientLanguage(client);
 	CheckSteamID(client);
 	
 	chooset[client] = true;
@@ -1354,7 +1356,7 @@ public T_CheckSteamID(Handle:owner, Handle:hndl, const String:error[], any:data)
 	{
 		return;
 	}
-	clientlang[client] = GetClientLanguage(client);
+	//clientlang[client] = GetClientLanguage(client);
 	if (hndl == INVALID_HANDLE)
 	{
 		ComprobarDB();
