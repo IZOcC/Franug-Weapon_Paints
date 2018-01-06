@@ -91,7 +91,7 @@ new ismysql;
 new Handle:array_paints[MAX_LANGUAGES];
 new Handle:array_armas;
 
-#define DATA "6.7.1 private version"
+#define DATA "6.7.2 private version"
 
 //new String:base[64] = "weaponpaints";
 
@@ -905,7 +905,7 @@ public DIDMenuHandler(Handle:menu, MenuAction:action, client, itemNum)
 					else Format(nombres, sizeof(nombres), g_paints[clientlang[client]][theindex][Nombre]);
 					decl String:steamid[32];
 					GetClientAuthId(client, AuthId_Steam2,  steamid, sizeof(steamid) );
-					Format(buffer, sizeof(buffer), "UPDATE weaponpaints_v67 SET %s = '%s' WHERE steamid = '%s';", Classname,g_paints[clientlang[client]][theindex][index],steamid);
+					Format(buffer, sizeof(buffer), "UPDATE weaponpaints_v67 SET %s = '%i' WHERE steamid = '%s';", Classname,theindex==-1?-1:g_paints[clientlang[client]][theindex][index],steamid);
 					LogToFileEx(g_sCmdLogPath, "Query %s", buffer);
 					SQL_TQuery(db, tbasico, buffer, GetClientUserId(client));
 					SetTrieValue(arbol[client], Classname, theindex);
@@ -956,7 +956,7 @@ public DIDMenuHandler(Handle:menu, MenuAction:action, client, itemNum)
 				else Format(nombres, sizeof(nombres), g_paints[clientlang[client]][theindex][Nombre]);
 				decl String:steamid[32];
 				GetClientAuthId(client, AuthId_Steam2,  steamid, sizeof(steamid) );
-				Format(buffer, sizeof(buffer), "UPDATE weaponpaints_v67 SET %s = '%s' WHERE steamid = '%s';", Classname,g_paints[clientlang[client]][theindex][index],steamid);
+				Format(buffer, sizeof(buffer), "UPDATE weaponpaints_v67 SET %s = '%i' WHERE steamid = '%s';", Classname,theindex==-1?-1:g_paints[clientlang[client]][theindex][index],steamid);
 				LogToFileEx(g_sCmdLogPath, "Query %s", buffer);
 				SQL_TQuery(db, tbasico, buffer, GetClientUserId(client));
 				SetTrieValue(arbol[client], Classname, theindex);
