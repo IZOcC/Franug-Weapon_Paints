@@ -91,7 +91,7 @@ new ismysql;
 new Handle:array_paints[MAX_LANGUAGES];
 new Handle:array_armas;
 
-#define DATA "6.7.3 private version"
+#define DATA "6.7.4 private version"
 
 //new String:base[64] = "weaponpaints";
 
@@ -1260,7 +1260,7 @@ public OnGiveNamedItemEx(int client, const char[] Classname)
 	new m_iItemIDLow = GetEntProp(entity, Prop_Send, "m_iItemIDLow"); */
 	GiveNamedItemEx.Paintkit = g_paints[clientlang[client]][valor][index];
 	
-	if(g_paints[clientlang[client]][valor][wear] >= 0.0) GiveNamedItemEx.Wear = g_paints[clientlang[client]][valor][wear];
+	if(!CommandExists("sm_wear") && g_paints[clientlang[client]][valor][wear] >= 0.0) GiveNamedItemEx.Wear = g_paints[clientlang[client]][valor][wear];
 	if(g_paints[clientlang[client]][valor][pattern] >= 0) GiveNamedItemEx.Seed = g_paints[clientlang[client]][valor][pattern];
 	
 	if(!CommandExists("sm_st"))
