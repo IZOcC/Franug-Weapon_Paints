@@ -1,6 +1,7 @@
 ### Tips
 * Use https://gitlab.com/Franc1sco/PRIVATE-WeaponPaints-new2/issues if you found bugs, you have questions, or you want a new feature.
 * Read the rules here: https://github.com/Franc1sco/Franug-PRIVATE-PLUGINS
+* Plugins like !wear !nametag and !stattrak are selling as extra plugin for a low price. Ask me (Franc1sco) for prices.
 
 ### Installation:
 * Install required plugin: https://gitlab.com/Franc1sco/Franug-GiveNamedItem (if you dont have access, then send a email to franug13@gmail.com with your gitlab email and paypal account that you use to pay this plugin)
