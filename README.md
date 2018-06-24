@@ -1,3 +1,8 @@
+### Complementary plugins
+
+* If you want stattrak, nametag or wear plugin, you need to buy it from me (Franc1sco Franug).
+
+
 ### Tips
 * Use https://gitlab.com/Franc1sco/PRIVATE-WeaponPaints-new2/issues if you found bugs, you have questions, or you want a new feature.
 * Read the rules here: https://github.com/Franc1sco/Franug-PRIVATE-PLUGINS
