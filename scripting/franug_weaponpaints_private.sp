@@ -91,7 +91,7 @@ new ismysql;
 new Handle:array_paints[MAX_LANGUAGES];
 new Handle:array_armas;
 
-#define DATA "6.7.4 private version"
+#define DATA "6.8 private version"
 
 //new String:base[64] = "weaponpaints";
 
@@ -331,6 +331,18 @@ public OnPluginStart()
 	Format(Items, 64, "knife_survival_bowie");
 	PushArrayString(array_armas, Items);
 	
+	Format(Items, 64, "knife_ursus");
+	PushArrayString(array_armas, Items);
+	
+	Format(Items, 64, "knife_gypsy_jackknife");
+	PushArrayString(array_armas, Items);
+	
+	Format(Items, 64, "knife_stiletto");
+	PushArrayString(array_armas, Items);
+	
+	Format(Items, 64, "knife_widowmaker");
+	PushArrayString(array_armas, Items);
+	
 	int count = GetLanguageCount();
 	for (new i=0; i<count; i++)
 		ReadPaints(i);
@@ -499,14 +511,14 @@ public OnSqlConnect(Handle:owner, Handle:hndl, const String:error[], any:data)
 		SQL_GetDriverIdent(SQL_ReadDriver(db), buffer, sizeof(buffer));
 		ismysql = StrEqual(buffer,"mysql", false) ? 1 : 0;
 	
-		new String:temp[64][44];
+		new String:temp[64][48];
 		for(new i=0;i<GetArraySize(array_armas);++i)
 		{
 			GetArrayString(array_armas, i, temp[i], 64);
 		}
 		if (ismysql == 1)
 		{
-			Format(buffer, sizeof(buffer), "CREATE TABLE IF NOT EXISTS `weaponpaints_v67` (`playername` varchar(128) NOT NULL, `steamid` varchar(32) NOT NULL, `last_accountuse` int(64) NOT NULL, `%s` varchar(64) NOT NULL DEFAULT 'none', `%s` varchar(64) NOT NULL DEFAULT 'none', `%s` varchar(64) NOT NULL DEFAULT 'none', `%s` varchar(64) NOT NULL DEFAULT 'none', `%s` varchar(64) NOT NULL DEFAULT 'none', `%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`favorite1` varchar(64) NOT NULL DEFAULT 'none',`favorite2` varchar(64) NOT NULL DEFAULT 'none',`favorite3` varchar(64) NOT NULL DEFAULT 'none',`favorite4` varchar(64) NOT NULL DEFAULT 'none',`favorite5` varchar(64) NOT NULL DEFAULT 'none',`favorite6` varchar(64) NOT NULL DEFAULT 'none',`favorite7` varchar(64) NOT NULL DEFAULT 'none',PRIMARY KEY  (`steamid`))",temp[0],temp[1],temp[2],temp[3],temp[4],temp[5],temp[6],temp[7],temp[8],temp[9],temp[10],temp[11],temp[12],temp[13],temp[14],temp[15],temp[16],temp[17],temp[18],temp[19],temp[20],temp[21],temp[22],temp[23],temp[24],temp[25],temp[26],temp[27],temp[28],temp[29],temp[30],temp[31],temp[32],temp[33],temp[34],temp[35],temp[36],temp[37],temp[38],temp[39],temp[40], temp[41], temp[42], temp[43]);
+			Format(buffer, sizeof(buffer), "CREATE TABLE IF NOT EXISTS `weaponpaints_v68` (`playername` varchar(128) NOT NULL, `steamid` varchar(32) NOT NULL, `last_accountuse` int(64) NOT NULL, `%s` varchar(64) NOT NULL DEFAULT 'none', `%s` varchar(64) NOT NULL DEFAULT 'none', `%s` varchar(64) NOT NULL DEFAULT 'none', `%s` varchar(64) NOT NULL DEFAULT 'none', `%s` varchar(64) NOT NULL DEFAULT 'none', `%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',`%s` varchar(64) NOT NULL DEFAULT 'none',PRIMARY KEY  (`steamid`))",temp[0],temp[1],temp[2],temp[3],temp[4],temp[5],temp[6],temp[7],temp[8],temp[9],temp[10],temp[11],temp[12],temp[13],temp[14],temp[15],temp[16],temp[17],temp[18],temp[19],temp[20],temp[21],temp[22],temp[23],temp[24],temp[25],temp[26],temp[27],temp[28],temp[29],temp[30],temp[31],temp[32],temp[33],temp[34],temp[35],temp[36],temp[37],temp[38],temp[39],temp[40], temp[41], temp[42], temp[43], temp[44], temp[45], temp[46], temp[47]);
 
 			LogToFileEx(g_sCmdLogPath, "Query %s", buffer);
 			SQL_TQuery(db, tbasicoC, buffer);
@@ -514,7 +526,7 @@ public OnSqlConnect(Handle:owner, Handle:hndl, const String:error[], any:data)
 		}
 		else
 		{
-			Format(buffer, sizeof(buffer), "CREATE TABLE IF NOT EXISTS weaponpaints_v67 (playername varchar(128) NOT NULL, steamid varchar(32) NOT NULL, last_accountuse int(64) NOT NULL, %s varchar(64) NOT NULL DEFAULT 'none', %s varchar(64) NOT NULL DEFAULT 'none', %s varchar(64) NOT NULL DEFAULT 'none', %s varchar(64) NOT NULL DEFAULT 'none', %s varchar(64) NOT NULL DEFAULT 'none', %s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',favorite1 varchar(64) NOT NULL DEFAULT 'none',favorite2 varchar(64) NOT NULL DEFAULT 'none',favorite3 varchar(64) NOT NULL DEFAULT 'none',favorite4 varchar(64) NOT NULL DEFAULT 'none',favorite5 varchar(64) NOT NULL DEFAULT 'none',favorite6 varchar(64) NOT NULL DEFAULT 'none',favorite7 varchar(64) NOT NULL DEFAULT 'none',PRIMARY KEY  (steamid))",temp[0],temp[1],temp[2],temp[3],temp[4],temp[5],temp[6],temp[7],temp[8],temp[9],temp[10],temp[11],temp[12],temp[13],temp[14],temp[15],temp[16],temp[17],temp[18],temp[19],temp[20],temp[21],temp[22],temp[23],temp[24],temp[25],temp[26],temp[27],temp[28],temp[29],temp[30],temp[31],temp[32],temp[33],temp[34],temp[35],temp[36],temp[37],temp[38],temp[39],temp[40],temp[41], temp[42], temp[43]);
+			Format(buffer, sizeof(buffer), "CREATE TABLE IF NOT EXISTS weaponpaints_v68 (playername varchar(128) NOT NULL, steamid varchar(32) NOT NULL, last_accountuse int(64) NOT NULL, %s varchar(64) NOT NULL DEFAULT 'none', %s varchar(64) NOT NULL DEFAULT 'none', %s varchar(64) NOT NULL DEFAULT 'none', %s varchar(64) NOT NULL DEFAULT 'none', %s varchar(64) NOT NULL DEFAULT 'none', %s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',%s varchar(64) NOT NULL DEFAULT 'none',PRIMARY KEY  (steamid))",temp[0],temp[1],temp[2],temp[3],temp[4],temp[5],temp[6],temp[7],temp[8],temp[9],temp[10],temp[11],temp[12],temp[13],temp[14],temp[15],temp[16],temp[17],temp[18],temp[19],temp[20],temp[21],temp[22],temp[23],temp[24],temp[25],temp[26],temp[27],temp[28],temp[29],temp[30],temp[31],temp[32],temp[33],temp[34],temp[35],temp[36],temp[37],temp[38],temp[39],temp[40],temp[41], temp[42], temp[43], temp[44], temp[45], temp[46], temp[47]);
 		
 			LogToFileEx(g_sCmdLogPath, "Query %s", buffer);
 			SQL_TQuery(db, tbasicoC, buffer);
@@ -575,9 +587,9 @@ public Action:RemoveSkins(client, args)
 	char steamid[64];
 	GetCmdArg(1, steamid, 64);
 	if (ismysql == 1)
-		Format(buffer, sizeof(buffer), "DELETE FROM `weaponpaints_v67` WHERE `steamid` = '%s';", steamid);
+		Format(buffer, sizeof(buffer), "DELETE FROM `weaponpaints_v68` WHERE `steamid` = '%s';", steamid);
 	else
-		Format(buffer, sizeof(buffer), "DELETE FROM weaponpaints_v67 WHERE steamid = '%s';", steamid);
+		Format(buffer, sizeof(buffer), "DELETE FROM weaponpaints_v68 WHERE steamid = '%s';", steamid);
 
 	LogToFileEx(g_sCmdLogPath, "Query %s", buffer);
 	SQL_TQuery(db, tbasicoPRemoved, buffer);
@@ -882,6 +894,10 @@ public DIDMenuHandler(Handle:menu, MenuAction:action, client, itemNum)
 					case 516: strcopy(Classname, 64, "knife_push");
 					case 64: strcopy(Classname, 64, "revolver");
 					case 514: strcopy(Classname, 64, "knife_survival_bowie");
+					case 519: strcopy(Classname, 64, "knife_ursus");
+					case 520: strcopy(Classname, 64, "knife_gypsy_jackknife");
+					case 522: strcopy(Classname, 64, "knife_stiletto");
+					case 523: strcopy(Classname, 64, "knife_widowmaker");
 				}
 				
 				if(arbol[client] == INVALID_HANDLE)
@@ -895,6 +911,7 @@ public DIDMenuHandler(Handle:menu, MenuAction:action, client, itemNum)
 					new valor = 0;
 					if(!GetTrieValue(arbol[client], Classname, valor))
 					{
+						//PrintToChat(client, "arbol no valido");
 						CPrintToChat(client, " {green}[WP]{default} %T", "You cant use a paint in this weapon", client);
 						if(g_rmenu) ShowMenu(client, GetMenuSelectionPosition());
 						return;
@@ -905,7 +922,7 @@ public DIDMenuHandler(Handle:menu, MenuAction:action, client, itemNum)
 					else Format(nombres, sizeof(nombres), g_paints[clientlang[client]][theindex][Nombre]);
 					decl String:steamid[32];
 					GetClientAuthId(client, AuthId_Steam2,  steamid, sizeof(steamid) );
-					Format(buffer, sizeof(buffer), "UPDATE weaponpaints_v67 SET %s = '%s' WHERE steamid = '%s';", Classname,theindex==-1?-1:g_paints[clientlang[client]][theindex][index],steamid);
+					Format(buffer, sizeof(buffer), "UPDATE weaponpaints_v68 SET %s = '%s' WHERE steamid = '%s';", Classname,theindex==-1?-1:g_paints[clientlang[client]][theindex][index],steamid);
 					LogToFileEx(g_sCmdLogPath, "Query %s", buffer);
 					SQL_TQuery(db, tbasico, buffer, GetClientUserId(client));
 					SetTrieValue(arbol[client], Classname, theindex);
@@ -956,7 +973,7 @@ public DIDMenuHandler(Handle:menu, MenuAction:action, client, itemNum)
 				else Format(nombres, sizeof(nombres), g_paints[clientlang[client]][theindex][Nombre]);
 				decl String:steamid[32];
 				GetClientAuthId(client, AuthId_Steam2,  steamid, sizeof(steamid) );
-				Format(buffer, sizeof(buffer), "UPDATE weaponpaints_v67 SET %s = '%s' WHERE steamid = '%s';", Classname,theindex==-1?-1:g_paints[clientlang[client]][theindex][index],steamid);
+				Format(buffer, sizeof(buffer), "UPDATE weaponpaints_v68 SET %s = '%s' WHERE steamid = '%s';", Classname,theindex==-1?-1:g_paints[clientlang[client]][theindex][index],steamid);
 				LogToFileEx(g_sCmdLogPath, "Query %s", buffer);
 				SQL_TQuery(db, tbasico, buffer, GetClientUserId(client));
 				SetTrieValue(arbol[client], Classname, theindex);
@@ -1290,7 +1307,7 @@ SaveCookies(client)
 	}	
 
 	decl String:buffer[3096];
-	Format(buffer, sizeof(buffer), "UPDATE weaponpaints_v67 SET last_accountuse = %d, playername = '%s' WHERE steamid = '%s';",GetTime(), SafeName,steamid);
+	Format(buffer, sizeof(buffer), "UPDATE weaponpaints_v68 SET last_accountuse = %d, playername = '%s' WHERE steamid = '%s';",GetTime(), SafeName,steamid);
 	LogToFileEx(g_sCmdLogPath, "Query %s", buffer);
 	SQL_TQuery(db, tbasico2, buffer);
 }
@@ -1342,7 +1359,7 @@ CheckSteamID(client)
 	decl String:query[255], String:steamid[32];
 	GetClientAuthId(client, AuthId_Steam2,  steamid, sizeof(steamid) );
 	
-	Format(query, sizeof(query), "SELECT * FROM weaponpaints_v67 WHERE steamid = '%s'", steamid);
+	Format(query, sizeof(query), "SELECT * FROM weaponpaints_v68 WHERE steamid = '%s'", steamid);
 	LogToFileEx(g_sCmdLogPath, "Query %s", query);
 	SQL_TQuery(db, T_CheckSteamID, query, GetClientUserId(client));
 }
@@ -1381,7 +1398,7 @@ public T_CheckSteamID(Handle:owner, Handle:hndl, const String:error[], any:data)
 		GetArrayString(array_armas, i, Items, 64);
 		SQL_FetchString(hndl, contar, temp, 64);
 		SetTrieValue(arbol[client], Items, FindStringInArray(array_paints[clientlang[client]], temp));
-		
+		//PrintToConsole(client, Items);
 		//PrintToChat(client, "Sacado %i del arma %s", FindStringInArray(array_paints[clientlang[client]], temp),Items);
 		
 		contar++;
@@ -1495,7 +1512,7 @@ Nuevo(client)
 		SQL_EscapeString(db, Name, SafeName, sizeof(SafeName));
 	}
 		
-	Format(query, sizeof(query), "INSERT INTO weaponpaints_v67(playername, steamid, last_accountuse) VALUES('%s', '%s', '%d');", SafeName, steamid, GetTime());
+	Format(query, sizeof(query), "INSERT INTO weaponpaints_v68(playername, steamid, last_accountuse) VALUES('%s', '%s', '%d');", SafeName, steamid, GetTime());
 	LogToFileEx(g_sCmdLogPath, "Query %s", query);
 	SQL_TQuery(db, tbasico3, query, userid);
 }
@@ -1516,9 +1533,9 @@ public PruneDatabase()
 	decl String:buffer[1024];
 
 	if (ismysql == 1)
-		Format(buffer, sizeof(buffer), "DELETE FROM `weaponpaints_v67` WHERE `last_accountuse`<'%d' AND `last_accountuse`>'0';", maxlastaccuse);
+		Format(buffer, sizeof(buffer), "DELETE FROM `weaponpaints_v68` WHERE `last_accountuse`<'%d' AND `last_accountuse`>'0';", maxlastaccuse);
 	else
-		Format(buffer, sizeof(buffer), "DELETE FROM weaponpaints_v67 WHERE last_accountuse<'%d' AND last_accountuse>'0';", maxlastaccuse);
+		Format(buffer, sizeof(buffer), "DELETE FROM weaponpaints_v68 WHERE last_accountuse<'%d' AND last_accountuse>'0';", maxlastaccuse);
 
 	LogToFileEx(g_sCmdLogPath, "Query %s", buffer);
 	SQL_TQuery(db, tbasicoP, buffer);
