@@ -91,7 +91,7 @@ new ismysql;
 new Handle:array_paints[MAX_LANGUAGES];
 new Handle:array_armas;
 
-#define DATA "6.9 private version"
+#define DATA "7.0.1 private version"
 
 //new String:base[64] = "weaponpaints";
 
@@ -127,7 +127,7 @@ public OnPluginStart()
 	CreateConVar("sm_wpaints_version", DATA, "", FCVAR_SPONLY|FCVAR_REPLICATED|FCVAR_NOTIFY|FCVAR_CHEAT|FCVAR_DONTRECORD);
 	
 	HookEvent("round_start", roundStart);
-	//HookEvent("player_team", EventPlayerTeam);
+	HookEvent("player_team", EventPlayerTeam);
 	//HookEvent("player_spawn", Event_Player_Spawn, EventHookMode_Pre);
 	AddCommandListener(OnJoinTeam, "joingame");
 	AddCommandListener(OnJoinTeam, "jointeam");
@@ -386,7 +386,7 @@ public CallBack(QueryCookie:cookie, client, ConVarQueryResult:result, const Stri
 }
 */
 
-/*
+
 public Action:EventPlayerTeam(Handle:event, const String:name[], bool:dontBroadcast)
 {
 	new client = GetClientOfUserId(GetEventInt(event, "userid"));
@@ -402,7 +402,7 @@ public Action:EventPlayerTeam(Handle:event, const String:name[], bool:dontBroadc
 	// refresh client channel after a delay to fix invalid memory access bug
 	CreateTimer(0.1, Timer_ClientLanguage, GetClientSerial(client), TIMER_FLAG_NO_MAPCHANGE);
 	return Plugin_Continue;
-}*/
+}
 
 public Action:Timer_ClientLanguage(Handle:timer, any:serial)
 {
