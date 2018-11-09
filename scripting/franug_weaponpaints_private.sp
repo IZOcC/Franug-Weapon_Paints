@@ -1,7 +1,7 @@
 /*
 	Weapon Paints
 
-	Copyright (C) 2017-2018 Francisco 'Franc1sco' García
+	Copyright (C) 2017 Francisco 'Franc1sco' García
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -31,12 +31,9 @@
 #include <lastrequest>
 #include <sm_franugknife>
 
-#pragma newdecls required
-#pragma semicolon 1
+new Handle:db;
 
-Handle db;
-
-int clientlang[MAXPLAYERS+1];
+new clientlang[MAXPLAYERS+1];
 
 //bool checked[MAXPLAYERS + 1];
 
@@ -59,53 +56,53 @@ enum Listados
 Handle g_hTypesArray[MAX_LANGUAGES] = INVALID_HANDLE;
 Handle g_hTypesMenu[MAX_LANGUAGES][MAX_TYPES];
 
-Handle menuw[MAX_LANGUAGES] = INVALID_HANDLE;
-int g_paints[MAX_LANGUAGES][MAX_PAINTS][Listados];
-int g_paintCount[MAX_LANGUAGES];
-char path_paints[PLATFORM_MAX_PATH];
+new Handle:menuw[MAX_LANGUAGES] = INVALID_HANDLE;
+new g_paints[MAX_LANGUAGES][MAX_PAINTS][Listados];
+new g_paintCount[MAX_LANGUAGES];
+new String:path_paints[PLATFORM_MAX_PATH];
 
-bool g_hosties = false;
+new bool:g_hosties = false;
 
-bool g_c4;
-Handle cvar_c4;
+new bool:g_c4;
+new Handle:cvar_c4;
 
-Handle arbol[MAXPLAYERS+1] = INVALID_HANDLE;
-Handle menu1[MAXPLAYERS+1] = INVALID_HANDLE;
+new Handle:arbol[MAXPLAYERS+1] = INVALID_HANDLE;
+new Handle:menu1[MAXPLAYERS+1] = INVALID_HANDLE;
 
-Handle saytimer;
-Handle cvar_saytimer;
-int g_saytimer;
+new Handle:saytimer;
+new Handle:cvar_saytimer;
+new g_saytimer;
 
-Handle rtimer;
-Handle cvar_rtimer;
-int g_rtimer;
+new Handle:rtimer;
+new Handle:cvar_rtimer;
+new g_rtimer;
 
-Handle cvar_rmenu;
-bool g_rmenu;
+new Handle:cvar_rmenu;
+new bool:g_rmenu;
 
-Handle cvar_onlyadmin;
-bool onlyadmin;
+new Handle:cvar_onlyadmin;
+new bool:onlyadmin;
 
-char s_arma[MAXPLAYERS+1][64];
-int s_sele[MAXPLAYERS+1];
+new String:s_arma[MAXPLAYERS+1][64];
+new s_sele[MAXPLAYERS+1];
 
-int ismysql;
+new ismysql;
 
-Handle array_paints[MAX_LANGUAGES];
-Handle array_armas;
+new Handle:array_paints[MAX_LANGUAGES];
+new Handle:array_armas;
 
-#define DATA "7.0 private version"
+#define DATA "6.9 private version"
 
 //new String:base[64] = "weaponpaints";
 
-bool uselocal = false;
+new bool:uselocal = false;
 
-bool comprobado41[MAXPLAYERS+1];
+new bool:comprobado41[MAXPLAYERS+1];
 
 bool chooset[MAXPLAYERS + 1];
 
 
-public Plugin myinfo =
+public Plugin:myinfo =
 {
 	name = "SM CS:GO Weapon Paints",
 	author = "Franc1sco franug",
@@ -114,11 +111,11 @@ public Plugin myinfo =
 	url = "http://steamcommunity.com/id/franug"
 };
 
-char g_sCmdLogPath[256];
+new String:g_sCmdLogPath[256];
 
-public void OnPluginStart()
+public OnPluginStart()
 {
- 	for(int i=0;;i++)
+ 	for(new i=0;;i++)
 	{
 		BuildPath(Path_SM, g_sCmdLogPath, sizeof(g_sCmdLogPath), "logs/weaponpaints_%d.log", i);
 		if ( !FileExists(g_sCmdLogPath) )
@@ -130,10 +127,10 @@ public void OnPluginStart()
 	CreateConVar("sm_wpaints_version", DATA, "", FCVAR_SPONLY|FCVAR_REPLICATED|FCVAR_NOTIFY|FCVAR_CHEAT|FCVAR_DONTRECORD);
 	
 	HookEvent("round_start", roundStart);
-	HookEvent("player_team", EventPlayerTeam);
+	//HookEvent("player_team", EventPlayerTeam);
 	//HookEvent("player_spawn", Event_Player_Spawn, EventHookMode_Pre);
-	//AddCommandListener(OnJoinTeam, "joingame");
-	//AddCommandListener(OnJoinTeam, "jointeam");
+	AddCommandListener(OnJoinTeam, "joingame");
+	AddCommandListener(OnJoinTeam, "jointeam");
 	
 	//RegConsoleCmd("buyammo1", GetSkins);
 	RegConsoleCmd("sm_ws", GetSkins);
@@ -162,9 +159,9 @@ public void OnPluginStart()
 	HookConVarChange(cvar_onlyadmin, OnConVarChanged);
 	
 	
-	char Items[64];
+	new String:Items[64];
 	
-	if(array_armas != INVALID_HANDLE) delete array_armas;
+	if(array_armas != INVALID_HANDLE) CloseHandle(array_armas);
 	
 	array_armas = CreateArray(128);
 	
@@ -350,15 +347,15 @@ public void OnPluginStart()
 	PushArrayString(array_armas, Items);
 	
 	int count = GetLanguageCount();
-	for (int i=0; i<count; i++)
+	for (new i=0; i<count; i++)
 		ReadPaints(i);
 		
 	ComprobarDB(true, "weaponpaints");
 }
 
-public void OnPluginEnd()
+public OnPluginEnd()
 {
-	for (int client = 1; client <= MaxClients; client++)
+	for (new client = 1; client <= MaxClients; client++)
 	{
 		if (!IsClientInGame(client))
 			continue;
@@ -389,22 +386,27 @@ public CallBack(QueryCookie:cookie, client, ConVarQueryResult:result, const Stri
 }
 */
 
-
-public Action EventPlayerTeam(Handle event, char[] name, bool dontBroadcast)
+/*
+public Action:EventPlayerTeam(Handle:event, const String:name[], bool:dontBroadcast)
 {
-	int client = GetClientOfUserId(GetEventInt(event, "userid"));
+	new client = GetClientOfUserId(GetEventInt(event, "userid"));
 	
-	if (chooset[client])return;
-	
-	clientlang[client] = GetClientLanguage(client);
-	CheckSteamID(client);
-	
-	chooset[client] = true;
-}
+	if(client > 0 && client <= MaxClients)
+	{
+		if(IsFakeClient(client))
+		{
+			return Plugin_Continue;
+		}
+	}
+		
+	// refresh client channel after a delay to fix invalid memory access bug
+	CreateTimer(0.1, Timer_ClientLanguage, GetClientSerial(client), TIMER_FLAG_NO_MAPCHANGE);
+	return Plugin_Continue;
+}*/
 
-public Action Timer_ClientLanguage(Handle timer, int serial)
+public Action:Timer_ClientLanguage(Handle:timer, any:serial)
 {
-	int client = GetClientFromSerial(serial);
+	new client = GetClientFromSerial(serial);
 	
 	if (client)
 	{
@@ -419,7 +421,6 @@ public Action Timer_ClientLanguage(Handle timer, int serial)
 	return Plugin_Stop;
 }
 
-/*
 public Action OnJoinTeam(int client, const char[] command, int args)
 {
 	if (chooset[client])return;
@@ -428,13 +429,13 @@ public Action OnJoinTeam(int client, const char[] command, int args)
 	CheckSteamID(client);
 	
 	chooset[client] = true;
-}*/
+}
 
-public void OnConVarChanged(Handle convar, const char[] oldValue, const char[] newValue)
+public OnConVarChanged(Handle:convar, const String:oldValue[], const String:newValue[])
 {
 	if (convar == cvar_c4)
 	{
-		g_c4 = view_as<bool>(StringToInt(newValue));
+		g_c4 = bool:StringToInt(newValue);
 	}
 	else if (convar == cvar_saytimer)
 	{
@@ -446,11 +447,11 @@ public void OnConVarChanged(Handle convar, const char[] oldValue, const char[] n
 	}
 	else if (convar == cvar_rmenu)
 	{
-		g_rmenu = view_as<bool>(StringToInt(newValue));
+		g_rmenu = bool:StringToInt(newValue);
 	}
 	else if (convar == cvar_onlyadmin)
 	{
-		onlyadmin = view_as<bool>(StringToInt(newValue));
+		onlyadmin = bool:StringToInt(newValue);
 	}
 }
 
@@ -465,9 +466,9 @@ public Action valveserver(Handle timer)
 	GameRules_SetProp("m_bIsQuestEligible", 1);
 }
 
-void ComprobarDB(bool reconnect = false, char[] basedatos = "weaponpaints")
+ComprobarDB(bool:reconnect = false,String:basedatos[64] = "weaponpaints")
 {
-	if(uselocal) Format(basedatos, 64, "clientprefs");
+	if(uselocal) basedatos = "clientprefs";
 	if(reconnect)
 	{
 		if (db != INVALID_HANDLE)
@@ -497,7 +498,7 @@ void ComprobarDB(bool reconnect = false, char[] basedatos = "weaponpaints")
 	SQL_TConnect(OnSqlConnect, basedatos);
 }
 
-public void OnSqlConnect(Handle owner, Handle hndl, const char[] error, int data)
+public OnSqlConnect(Handle:owner, Handle:hndl, const String:error[], any:data)
 {
 	if (hndl == INVALID_HANDLE)
 	{
@@ -508,13 +509,13 @@ public void OnSqlConnect(Handle owner, Handle hndl, const char[] error, int data
 	else
 	{
 		db = hndl;
-		char buffer[3096];
+		decl String:buffer[3096];
 		
 		SQL_GetDriverIdent(SQL_ReadDriver(db), buffer, sizeof(buffer));
 		ismysql = StrEqual(buffer,"mysql", false) ? 1 : 0;
 	
-		char temp[64][49];
-		for(int i=0;i<GetArraySize(array_armas);++i)
+		new String:temp[64][49];
+		for(new i=0;i<GetArraySize(array_armas);++i)
 		{
 			GetArrayString(array_armas, i, temp[i], 64);
 		}
@@ -536,7 +537,7 @@ public void OnSqlConnect(Handle owner, Handle hndl, const char[] error, int data
 	}
 }
 
-public void OnClientDisconnect(int client)
+public OnClientDisconnect(client)
 {	
 	//checked[client] = false;
 	chooset[client] = false;
@@ -555,7 +556,7 @@ public void OnClientDisconnect(int client)
 	}
 }
 
-public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max)
+public APLRes:AskPluginLoad2(Handle:myself, bool:late, String:error[], err_max)
 {
 	MarkNativeAsOptional("IsClientInLastRequest");
 	MarkNativeAsOptional("Franug_GetKnife");
@@ -565,7 +566,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	return APLRes_Success;
 }
 
-public void OnLibraryAdded(const char[] name)
+public OnLibraryAdded(const String:name[])
 {
 	if (StrEqual(name, "hosties"))
 	{
@@ -573,7 +574,7 @@ public void OnLibraryAdded(const char[] name)
 	}
 }
 
-public void OnLibraryRemoved(const char[] name)
+public OnLibraryRemoved(const String:name[])
 {
 	if (StrEqual(name, "hosties"))
 	{
@@ -583,9 +584,9 @@ public void OnLibraryRemoved(const char[] name)
 	
 }
 
-public Action RemoveSkins(int client, int args)
+public Action:RemoveSkins(client, args)
 {	
-	char buffer[1024];
+	decl String:buffer[1024];
 	char steamid[64];
 	GetCmdArg(1, steamid, 64);
 	if (ismysql == 1)
@@ -601,10 +602,10 @@ public Action RemoveSkins(int client, int args)
 }
 
 
-public Action ReloadSkins(int client, int args)
+public Action:ReloadSkins(client, args)
 {	
 	int count = GetLanguageCount();
-	for (int i=0; i<count; i++)
+	for (new i=0; i<count; i++)
 		ReadPaints(i);
 		
 	
@@ -613,7 +614,7 @@ public Action ReloadSkins(int client, int args)
 	return Plugin_Handled;
 }
 
-void ShowMenu(int client, int item)
+ShowMenu(client, item)
 {
 	if (item == 0 && GetArraySize(g_hTypesArray[clientlang[client]]) > 0)
 	{
@@ -644,7 +645,7 @@ void ShowMenu(int client, int item)
 		//RemoveMenuItem(menuw, 2);
 		RemoveMenuItem(menuw[clientlang[client]], 1);
 		RemoveMenuItem(menuw[clientlang[client]], 0);
-		char tdisplay[64];
+		decl String:tdisplay[64];
 		//Format(tdisplay, sizeof(tdisplay), "%T", "Choose from your favorite paints", client);
 		//InsertMenuItem(menuw, 0, "-2", tdisplay);
 		Format(tdisplay, sizeof(tdisplay), "%T", "Random paint", client);
@@ -656,14 +657,14 @@ void ShowMenu(int client, int item)
 	}
 }
 
-void ShowMenuM(int client)
+ShowMenuM(client)
 {
 	if(onlyadmin && GetUserAdmin(client) == INVALID_ADMIN_ID) return;
 	
-	Handle menu2 = CreateMenu(DIDMenuHandler_2);
+	new Handle:menu2 = CreateMenu(DIDMenuHandler_2);
 	SetMenuTitle(menu2, "%T by Franc1sco franug","Menu title 2", client, DATA);
 	
-	char tdisplay[64];
+	decl String:tdisplay[64];
 	Format(tdisplay, sizeof(tdisplay), "%T", "Select paint for the current weapon", client);
 	AddMenuItem(menu2, "1", tdisplay);
 	Format(tdisplay, sizeof(tdisplay), "%T", "Select paint for each weapon", client);
@@ -679,7 +680,7 @@ void ShowMenuM(int client)
 	DisplayMenu(menu2, client, 0);
 }
 
-public Action GetSkins(int client,int args)
+public Action:GetSkins(client, args)
 {	
 	Format(s_arma[client], 64, "none");
 	ShowMenuM(client);
@@ -687,7 +688,7 @@ public Action GetSkins(int client,int args)
 	return Plugin_Handled;
 }
 
-public Action OnClientSayCommand(int client, const char[] command, const char[] sArgs)
+public Action:OnClientSayCommand(client, const String:command[], const String:sArgs[])
 {
     if(StrEqual(sArgs, "!wskins", false) || StrEqual(sArgs, "!ws", false) || StrEqual(sArgs, "!paints", false))
 	{
@@ -711,17 +712,17 @@ public Action OnClientSayCommand(int client, const char[] command, const char[] 
     return Plugin_Continue;
 }
 
-void ShowSkin(int client)
+ShowSkin(client)
 {
-	int weapon = GetEntPropEnt(client, Prop_Send, "m_hActiveWeapon");
+	new weapon = GetEntPropEnt(client, Prop_Send, "m_hActiveWeapon");
 	if(weapon < 1 || !IsValidEdict(weapon) || !IsValidEntity(weapon))
 	{
 		CPrintToChat(client, " {green}[WP]{default} %T", "Paint not found", client);
 		return;
 	}
 	
-	int buscar = GetEntProp(weapon,Prop_Send,"m_nFallbackPaintKit");
-	for(int i=1; i<g_paintCount[clientlang[client]];i++)
+	new buscar = GetEntProp(weapon,Prop_Send,"m_nFallbackPaintKit");
+	for(new i=1; i<g_paintCount[clientlang[client]];i++)
 	{
 		if(buscar == g_paints[clientlang[client]][i][index])
 		{
@@ -733,12 +734,12 @@ void ShowSkin(int client)
 	CPrintToChat(client, " {green}[WP]{default} %T", "Paint not found", client);
 }
 
-public Action Tsaytimer(Handle timer)
+public Action:Tsaytimer(Handle:timer)
 {
 	saytimer = INVALID_HANDLE;
 }
 
-public Action roundStart(Handle event, const char[] name, bool dontBroadcast) 
+public Action:roundStart(Handle:event, const String:name[], bool:dontBroadcast) 
 {
 	if(g_rtimer == -1) return;
 	
@@ -751,22 +752,22 @@ public Action roundStart(Handle event, const char[] name, bool dontBroadcast)
 	rtimer = CreateTimer(1.0*g_rtimer, Rtimer);
 }
 
-public Action Rtimer(Handle timer)
+public Action:Rtimer(Handle:timer)
 {
 	rtimer = INVALID_HANDLE;
 }
 
-public int DIDMenuHandler_2(Handle menu, MenuAction action,int client,int itemNum) 
+public DIDMenuHandler_2(Handle:menu, MenuAction:action, client, itemNum) 
 {
 	if ( action == MenuAction_Select ) 
 	{
 
 		
-		char info[4];
+		decl String:info[4];
 		
 		GetMenuItem(menu, itemNum, info, sizeof(info));
 
-		int theindex = StringToInt(info);
+		new theindex = StringToInt(info);
 		if(theindex == 1) ShowMenu(client, 0);
 		else if(theindex == 2 && comprobado41[client]) ShowMenuArmas(client, 0);
 		else if(theindex == 3) FakeClientCommand(client, "sm_st");
@@ -801,13 +802,13 @@ public int SkinCategoryHandler(Handle menu, MenuAction action, int client, int i
 	}
 }
 
-void ShowMenuArmas(int client,int item)
+ShowMenuArmas(client, item)
 {	
 	if(menu1[client] == INVALID_HANDLE) CrearMenu1(client);
 	DisplayMenuAtItem(menu1[client], client, item, 0);
 }
 
-public int DIDMenuHandler(Handle menu, MenuAction action,int client,int itemNum) 
+public DIDMenuHandler(Handle:menu, MenuAction:action, client, itemNum) 
 {
 	if ( action == MenuAction_Select ) 
 	{
@@ -817,11 +818,11 @@ public int DIDMenuHandler(Handle menu, MenuAction action,int client,int itemNum)
 			return;
 		}
 		
-		char Classname[64];
-		char info[4];
+		decl String:Classname[64];
+		decl String:info[4];
 		
 		GetMenuItem(menu, itemNum, info, sizeof(info));
-		int theindex = StringToInt(info);
+		new theindex = StringToInt(info);
 		
 		if(StrEqual(s_arma[client], "none"))
 		{
@@ -855,7 +856,7 @@ public int DIDMenuHandler(Handle menu, MenuAction action,int client,int itemNum)
 			}
 			
 		
-			int windex = GetEntPropEnt(client, Prop_Send, "m_hActiveWeapon");
+			new windex = GetEntPropEnt(client, Prop_Send, "m_hActiveWeapon");
 			if(windex < 1)
 			{
 				CPrintToChat(client, " {green}[WP]{default} %T", "You cant use a paint in this weapon", client);
@@ -871,7 +872,7 @@ public int DIDMenuHandler(Handle menu, MenuAction action,int client,int itemNum)
 				return;
 			}
 			ReplaceString(Classname, 64, "weapon_", "");
-			int weaponindex = GetEntProp(windex, Prop_Send, "m_iItemDefinitionIndex");
+			new weaponindex = GetEntProp(windex, Prop_Send, "m_iItemDefinitionIndex");
 			if(weaponindex == 42 || weaponindex == 59)
 			{
 				CPrintToChat(client, " {green}[WP]{default} %T", "You cant use a paint in this weapon", client);
@@ -911,7 +912,7 @@ public int DIDMenuHandler(Handle menu, MenuAction action,int client,int itemNum)
 				}
 				else 
 				{
-					int valor = 0;
+					new valor = 0;
 					if(!GetTrieValue(arbol[client], Classname, valor))
 					{
 						//PrintToChat(client, "arbol no valido");
@@ -920,10 +921,10 @@ public int DIDMenuHandler(Handle menu, MenuAction action,int client,int itemNum)
 						return;
 					}
 					
-					char buffer[1024], nombres[64];
+					decl String:buffer[1024], String:nombres[64];
 					if(theindex == -1) Format(nombres, sizeof(nombres), "default");
 					else Format(nombres, sizeof(nombres), g_paints[clientlang[client]][theindex][Nombre]);
-					char steamid[32];
+					decl String:steamid[32];
 					GetClientAuthId(client, AuthId_Steam2,  steamid, sizeof(steamid) );
 					Format(buffer, sizeof(buffer), "UPDATE weaponpaints_v69 SET %s = '%s' WHERE steamid = '%s';", Classname,theindex==-1?-1:g_paints[clientlang[client]][theindex][index],steamid);
 					LogToFileEx(g_sCmdLogPath, "Query %s", buffer);
@@ -932,7 +933,7 @@ public int DIDMenuHandler(Handle menu, MenuAction action,int client,int itemNum)
 				}
 				
 				//ChangePaint(client, windex, Classname, weaponindex, true);
-				char Classname2[64];
+				decl String:Classname2[64];
 				Format(Classname2, 64, "weapon_%s", Classname);
 				Restore(client, windex, Classname2);
 				FakeClientCommand(client, "use %s", Classname2);
@@ -940,7 +941,7 @@ public int DIDMenuHandler(Handle menu, MenuAction action,int client,int itemNum)
 				else if(theindex == 0) CPrintToChat(client, " {green}[WP]{default} %T","You have choose a random paint for your",client, Classname);
 				else CPrintToChat(client, " {green}[WP]{default} %T", "You have choose a weapon",client, g_paints[clientlang[client]][theindex][Nombre], Classname);
 				
-				char temp[128], temp1[64];
+				decl String:temp[128], String:temp1[64];
 				if(theindex == -1) Format(temp, 128, "%s", Classname);
 				else if (theindex == 0)
 				{
@@ -950,7 +951,7 @@ public int DIDMenuHandler(Handle menu, MenuAction action,int client,int itemNum)
 				}
 				else Format(temp, 128, "%s - %s", Classname, g_paints[clientlang[client]][theindex][Nombre]);
 				if(menu1[client] == INVALID_HANDLE) CrearMenu1(client);
-				int imenu = FindStringInArray(array_armas, Classname);
+				new imenu = FindStringInArray(array_armas, Classname);
 				InsertMenuItem(menu1[client], imenu, Classname, temp);
 				FindStringInArray(array_armas, Classname);
 				RemoveMenuItem(menu1[client], imenu+1);
@@ -971,10 +972,10 @@ public int DIDMenuHandler(Handle menu, MenuAction action,int client,int itemNum)
 			}
 			else 
 			{
-				char buffer[1024], nombres[64];
+				decl String:buffer[1024], String:nombres[64];
 				if(theindex == -1) Format(nombres, sizeof(nombres), "default");
 				else Format(nombres, sizeof(nombres), g_paints[clientlang[client]][theindex][Nombre]);
-				char steamid[32];
+				decl String:steamid[32];
 				GetClientAuthId(client, AuthId_Steam2,  steamid, sizeof(steamid) );
 				Format(buffer, sizeof(buffer), "UPDATE weaponpaints_v69 SET %s = '%s' WHERE steamid = '%s';", Classname,theindex==-1?-1:g_paints[clientlang[client]][theindex][index],steamid);
 				LogToFileEx(g_sCmdLogPath, "Query %s", buffer);
@@ -986,7 +987,7 @@ public int DIDMenuHandler(Handle menu, MenuAction action,int client,int itemNum)
 			else if(theindex == 0) CPrintToChat(client, " {green}[WP]{default} %T","You have choose a random paint for your",client, Classname);
 			else CPrintToChat(client, " {green}[WP]{default} %T", "You have choose a weapon",client, g_paints[clientlang[client]][theindex][Nombre], Classname);
 			
-			char temp[128], temp1[64];
+			decl String:temp[128], String:temp1[64];
 			if(theindex == -1) Format(temp, 128, "%s", Classname);
 			else if (theindex == 0)
 			{
@@ -995,7 +996,7 @@ public int DIDMenuHandler(Handle menu, MenuAction action,int client,int itemNum)
 				Format(temp, 128, "%s - %s", Classname, temp1);
 			}
 			else Format(temp, 128, "%s - %s", Classname, g_paints[clientlang[client]][theindex][Nombre]);
-			int imenu = FindStringInArray(array_armas, Classname);
+			new imenu = FindStringInArray(array_armas, Classname);
 			InsertMenuItem(menu1[client], imenu, Classname, temp);
 			FindStringInArray(array_armas, Classname);
 			RemoveMenuItem(menu1[client], imenu+1);
@@ -1042,7 +1043,7 @@ public int DIDMenuHandler(Handle menu, MenuAction action,int client,int itemNum)
 	}
 } */
 
-void ReadPaints(int index_new)
+ReadPaints(index_new)
 {
 	g_hTypesArray[index_new] = CreateArray(32);
 	array_paints[index_new] = CreateArray(128);
@@ -1053,11 +1054,11 @@ void ReadPaints(int index_new)
 	
 	if(!FileExists(path_paints)) BuildPath(Path_SM, path_paints, sizeof(path_paints), "configs/franug_weaponpaints/csgo_wpaints_english.cfg");
 	
-	Handle kv;
+	decl Handle:kv;
 	g_paintCount[index_new] = 1;
 	ClearArray(array_paints[index_new]);
 	PushArrayString(array_paints[index_new], "random");
-	Format(g_paints[index_new][0][Nombre], 64, "random");
+	Format(g_paints[index_new][0][Nombre], 64, "random")
 
 	kv = CreateKeyValues("Paints");
 	FileToKeyValues(kv, path_paints);
@@ -1088,7 +1089,7 @@ void ReadPaints(int index_new)
 	
 	
 	char w_temp[64];
-	for (int i=1; i<GetArraySize(array_armas); ++i)
+	for (new i=1; i<GetArraySize(array_armas); ++i)
 	{
 		GetArrayString(array_armas, i, w_temp, 64);
 		PushArrayString(g_hTypesArray[index_new], w_temp);
@@ -1103,17 +1104,17 @@ void ReadPaints(int index_new)
 	
 	// TROLLING
 	SetMenuTitle(menuw[index_new], "( ͡° ͜ʖ ͡°)");
-	char item[4];
+	decl String:item[4];
 	AddMenuItem(menuw[index_new], "0", "Random paint");
 	AddMenuItem(menuw[index_new], "-1", "Default paint"); 
 	// FORGET THIS
 	
-	for (int i=g_paintCount[index_new]; i<MAX_PAINTS; ++i) {
+	for (new i=g_paintCount[index_new]; i<MAX_PAINTS; ++i) {
 	
 		g_paints[index_new][i][index] = 0;
 	}
 	//decl String:menuitem[192];
-	for (int i=1; i<g_paintCount[index_new]; ++i) {
+	for (new i=1; i<g_paintCount[index_new]; ++i) {
 		Format(item, 4, "%i", i);
 		AddMenuItem(menuw[index_new], item, g_paints[index_new][i][Nombre]);
 		
@@ -1166,23 +1167,23 @@ stock SetReserveAmmo(client, weapon, ammo)
     SetEntProp(client, Prop_Send, "m_iAmmo", ammo, _, ammotype);
 }  */
 
-stock int GetReserveAmmo(int weapon)
+stock GetReserveAmmo(weapon)
 {
-	int ammotype = GetEntProp(weapon, Prop_Send, "m_iPrimaryReserveAmmoCount");
+	new ammotype = GetEntProp(weapon, Prop_Send, "m_iPrimaryReserveAmmoCount");
 	if(ammotype == -1) return -1;
     
 	return ammotype;
 }
 
-stock void SetReserveAmmo(int weapon,int ammo)
+stock SetReserveAmmo(weapon, ammo)
 {
 	SetEntProp(weapon, Prop_Send, "m_iPrimaryReserveAmmoCount", ammo);
 	//PrintToChatAll("fijar es %i", ammo);
 } 
 
-void Restore(int client,int windex, char Classname[64])
+Restore(client, windex, String:Classname[64])
 {
-	bool knife = false;
+	new bool:knife = false;
 	if(StrContains(Classname, "weapon_knife", false) == 0 || StrContains(Classname, "weapon_bayonet", false) == 0) 
 	{
 		knife = true;
@@ -1203,20 +1204,20 @@ void Restore(int client,int windex, char Classname[64])
 	}
 	
 	//PrintToChat(client, "weapon %s", Classname);
-	int ammo, clip;
+	new ammo, clip;
 	ammo = GetReserveAmmo(windex);
 	clip = GetEntProp(windex, Prop_Send, "m_iClip1");
 	
 	RemovePlayerItem(client, windex);
 	AcceptEntityInput(windex, "Kill");
 	
-	int entity = GivePlayerItem(client, Classname);
+	new entity = GivePlayerItem(client, Classname);
 
 	SetReserveAmmo(entity, ammo);
 	SetEntProp(entity, Prop_Send, "m_iClip1", clip);
 }
 
-public void OnGiveNamedItemEx(int client, const char[] Classname)
+public OnGiveNamedItemEx(int client, const char[] Classname)
 {
 	if (StrContains(Classname, "weapon_") != 0)
 		return;
@@ -1257,7 +1258,7 @@ public void OnGiveNamedItemEx(int client, const char[] Classname)
 	ReplaceString(classnamet, 64, "weapon_", "");
 
 	if(arbol[client] == INVALID_HANDLE) return;
-	int valor = 0;
+	new valor = 0;
 	if(!GetTrieValue(arbol[client], classnamet, valor)) return;
 	if(valor == -1 || (valor != 0 && g_paints[clientlang[client]][valor][index] == 0)) return;
 	
@@ -1295,12 +1296,12 @@ public void OnGiveNamedItemEx(int client, const char[] Classname)
 	}
 }
 
-void SaveCookies(int client)
+SaveCookies(client)
 {
-	char steamid[32];
+	decl String:steamid[32];
 	GetClientAuthId(client, AuthId_Steam2,  steamid, sizeof(steamid) );
-	char Name[MAX_NAME_LENGTH+1];
-	char SafeName[(sizeof(Name)*2)+1];
+	new String:Name[MAX_NAME_LENGTH+1];
+	new String:SafeName[(sizeof(Name)*2)+1];
 	if (!GetClientName(client, Name, sizeof(Name)))
 		Format(SafeName, sizeof(SafeName), "<noname>");
 	else
@@ -1309,23 +1310,23 @@ void SaveCookies(int client)
 		SQL_EscapeString(db, Name, SafeName, sizeof(SafeName));
 	}	
 
-	char buffer[3096];
+	decl String:buffer[3096];
 	Format(buffer, sizeof(buffer), "UPDATE weaponpaints_v69 SET last_accountuse = %d, playername = '%s' WHERE steamid = '%s';",GetTime(), SafeName,steamid);
 	LogToFileEx(g_sCmdLogPath, "Query %s", buffer);
 	SQL_TQuery(db, tbasico2, buffer);
 }
 
-void CrearMenu1(int client)
+CrearMenu1(client)
 {
 	
 	menu1[client] = CreateMenu(DIDMenuHandler_armas);
 	SetMenuTitle(menu1[client], "%T","Menu title 1", client);
 	
-	char Items[64];
+	new String:Items[64];
 	
-	char temp[128], temp1[64];
-	int valor;
-	for(int i=0;i<GetArraySize(array_armas);++i)
+	decl String:temp[128], String:temp1[64];
+	new valor;
+	for(new i=0;i<GetArraySize(array_armas);++i)
 	{
 		GetArrayString(array_armas, i, Items, 64);
 		if(GetTrieValue(arbol[client], Items, valor))
@@ -1343,11 +1344,11 @@ void CrearMenu1(int client)
 	}
 }
 
-public int DIDMenuHandler_armas(Handle menu, MenuAction action,int client,int itemNum) 
+public DIDMenuHandler_armas(Handle:menu, MenuAction:action, client, itemNum) 
 {
 	if ( action == MenuAction_Select ) 
 	{
-		char info[64];
+		decl String:info[64];
 		
 		GetMenuItem(menu, itemNum, info, sizeof(info));
 
@@ -1357,9 +1358,9 @@ public int DIDMenuHandler_armas(Handle menu, MenuAction action,int client,int it
 	}
 }
 
-void CheckSteamID(int client)
+CheckSteamID(client)
 {
-	char query[255], steamid[32];
+	decl String:query[255], String:steamid[32];
 	GetClientAuthId(client, AuthId_Steam2,  steamid, sizeof(steamid) );
 	
 	Format(query, sizeof(query), "SELECT * FROM weaponpaints_v69 WHERE steamid = '%s'", steamid);
@@ -1367,9 +1368,9 @@ void CheckSteamID(int client)
 	SQL_TQuery(db, T_CheckSteamID, query, GetClientUserId(client));
 }
  
-public void T_CheckSteamID(Handle owner, Handle hndl, const char[] error, int data)
+public T_CheckSteamID(Handle:owner, Handle:hndl, const String:error[], any:data)
 {
-	int client;
+	new client;
  
 	/* Make sure the client didn't disconnect while the thread was running */
 	if ((client = GetClientOfUserId(data)) == 0 || !IsClientInGame(client))
@@ -1391,12 +1392,12 @@ public void T_CheckSteamID(Handle owner, Handle hndl, const char[] error, int da
 	
 	arbol[client] = CreateTrie();
 
-	char Items[64];
+	new String:Items[64];
 	
-	char temp[64];
-	int contar = 3;
+	new String:temp[64];
+	new contar = 3;
 	//PrintToChat(client, "pasado");
-	for(int i=0;i<GetArraySize(array_armas);++i)
+	for(new i=0;i<GetArraySize(array_armas);++i)
 	{
 		GetArrayString(array_armas, i, Items, 64);
 		SQL_FetchString(hndl, contar, temp, 64);
@@ -1467,7 +1468,7 @@ public void T_CheckSteamID(Handle owner, Handle hndl, const char[] error, int da
 
 }
 
-public void tbasicoPRemoved(Handle owner, Handle hndl, const char[] error, int data)
+public tbasicoPRemoved(Handle:owner, Handle:hndl, const String:error[], any:data)
 {
 	if (hndl == INVALID_HANDLE)
 	{
@@ -1478,13 +1479,13 @@ public void tbasicoPRemoved(Handle owner, Handle hndl, const char[] error, int d
 	PrintToServer("Client deleted");
 }
 
-void Renovar(int client)
+Renovar(client)
 {
 	if(IsPlayerAlive(client))
 	{
 		char classname[64];
 		int weaponIndex;
-		for (int i = 0; i <= 3; i++)
+		for (new i = 0; i <= 3; i++)
 		{
 			if(i == CS_SLOT_GRENADE) continue;
 			
@@ -1498,15 +1499,15 @@ void Renovar(int client)
 	}
 }
 
-void Nuevo(int client)
+Nuevo(client)
 {
 	//PrintToChatAll("metido");
-	char query[255], steamid[32];
+	decl String:query[255], String:steamid[32];
 	GetClientAuthId(client, AuthId_Steam2,  steamid, sizeof(steamid) );
-	int userid = GetClientUserId(client);
+	new userid = GetClientUserId(client);
 	
-	char Name[MAX_NAME_LENGTH+1];
-	char SafeName[(sizeof(Name)*2)+1];
+	new String:Name[MAX_NAME_LENGTH+1];
+	new String:SafeName[(sizeof(Name)*2)+1];
 	if (!GetClientName(client, Name, sizeof(Name)))
 		Format(SafeName, sizeof(SafeName), "<noname>");
 	else
@@ -1521,7 +1522,7 @@ void Nuevo(int client)
 }
 
 
-public void PruneDatabase()
+public PruneDatabase()
 {
 	if (db == INVALID_HANDLE)
 	{
@@ -1530,10 +1531,10 @@ public void PruneDatabase()
 		return;
 	}
 
-	int maxlastaccuse;
+	new maxlastaccuse;
 	maxlastaccuse = GetTime() - (IDAYS * 86400);
 
-	char buffer[1024];
+	decl String:buffer[1024];
 
 	if (ismysql == 1)
 		Format(buffer, sizeof(buffer), "DELETE FROM `weaponpaints_v69` WHERE `last_accountuse`<'%d' AND `last_accountuse`>'0';", maxlastaccuse);
@@ -1544,13 +1545,13 @@ public void PruneDatabase()
 	SQL_TQuery(db, tbasicoP, buffer);
 }
 
-public void tbasico(Handle owner, Handle hndl, const char[] error, int data)
+public tbasico(Handle:owner, Handle:hndl, const String:error[], any:data)
 {
 	if (hndl == INVALID_HANDLE)
 	{
 		LogToFileEx(g_sCmdLogPath, "Query failure: %s", error);
 	}
-	int client;
+	new client;
  
 	/* Make sure the client didn't disconnect while the thread was running */
 	if ((client = GetClientOfUserId(data)) == 0)
@@ -1561,7 +1562,7 @@ public void tbasico(Handle owner, Handle hndl, const char[] error, int data)
 	
 }
 
-public void tbasico2(Handle owner, Handle hndl, const char[] error, int data)
+public tbasico2(Handle:owner, Handle:hndl, const String:error[], any:data)
 {
 	if (hndl == INVALID_HANDLE)
 	{
@@ -1570,14 +1571,14 @@ public void tbasico2(Handle owner, Handle hndl, const char[] error, int data)
 	}
 }
 
-public void tbasico3(Handle owner, Handle hndl, const char[] error, int data)
+public tbasico3(Handle:owner, Handle:hndl, const String:error[], any:data)
 {
 	if (hndl == INVALID_HANDLE)
 	{
 		LogToFileEx(g_sCmdLogPath, "Query failure: %s", error);
 		ComprobarDB();
 	}
-	int client;
+	new client;
  
 	/* Make sure the client didn't disconnect while the thread was running */
 	if ((client = GetClientOfUserId(data)) == 0)
@@ -1587,9 +1588,9 @@ public void tbasico3(Handle owner, Handle hndl, const char[] error, int data)
 	
 	arbol[client] = CreateTrie();
 
-	char Items[64];
+	new String:Items[64];
 	
-	for(int i=0;i<GetArraySize(array_armas);++i)
+	for(new i=0;i<GetArraySize(array_armas);++i)
 	{
 		GetArrayString(array_armas, i, Items, 64);
 		SetTrieValue(arbol[client], Items, -1);
@@ -1606,7 +1607,7 @@ public void tbasico3(Handle owner, Handle hndl, const char[] error, int data)
 	comprobado41[client] = true;
 }
 
-public void tbasicoC(Handle owner, Handle hndl, const char[] error, int data)
+public tbasicoC(Handle:owner, Handle:hndl, const String:error[], any:data)
 {
 	if (hndl == INVALID_HANDLE)
 	{
@@ -1614,7 +1615,7 @@ public void tbasicoC(Handle owner, Handle hndl, const char[] error, int data)
 	}
 	//LogMessage("Database connection successful");
 	
-	for(int client = 1; client <= MaxClients; client++)
+	for(new client = 1; client <= MaxClients; client++)
 	{
 		if(IsClientInGame(client))
 		{
@@ -1624,7 +1625,7 @@ public void tbasicoC(Handle owner, Handle hndl, const char[] error, int data)
 	}
 }
 
-public void tbasicoP(Handle owner, Handle hndl, const char[] error, int data)
+public tbasicoP(Handle:owner, Handle:hndl, const String:error[], any:data)
 {
 	if (hndl == INVALID_HANDLE)
 	{
