@@ -91,11 +91,9 @@ new ismysql;
 new Handle:array_paints[MAX_LANGUAGES];
 new Handle:array_armas;
 
-#define DATA "7.0.1 private version"
+#define DATA "7.0.2 private version"
 
 //new String:base[64] = "weaponpaints";
-
-new bool:uselocal = false;
 
 new bool:comprobado41[MAXPLAYERS+1];
 
@@ -350,7 +348,7 @@ public OnPluginStart()
 	for (new i=0; i<count; i++)
 		ReadPaints(i);
 		
-	ComprobarDB(true, "weaponpaints");
+	ComprobarDB();
 }
 
 public OnPluginEnd()
@@ -466,36 +464,12 @@ public Action valveserver(Handle timer)
 	GameRules_SetProp("m_bIsQuestEligible", 1);
 }
 
-ComprobarDB(bool:reconnect = false,String:basedatos[64] = "weaponpaints")
+ComprobarDB()
 {
-	if(uselocal) basedatos = "clientprefs";
-	if(reconnect)
-	{
-		if (db != INVALID_HANDLE)
-		{
-			//LogMessage("Reconnecting DB connection");
-			CloseHandle(db);
-			db = INVALID_HANDLE;
-		}
-	}
-	else if (db != INVALID_HANDLE)
-	{
-		return;
-	}
-
-	if (!SQL_CheckConfig( basedatos ))
-	{
-		if(StrEqual(basedatos, "clientprefs")) SetFailState("Databases not found");
-		else 
-		{
-			//base = "clientprefs";
-			ComprobarDB(true,"clientprefs");
-			uselocal = true;
-		}
-		
-		return;
-	}
-	SQL_TConnect(OnSqlConnect, basedatos);
+	if (!SQL_CheckConfig( "weaponpaints" )) 
+		SQL_TConnect(OnSqlConnect);
+	else 
+		SQL_TConnect(OnSqlConnect, "weaponpaints");
 }
 
 public OnSqlConnect(Handle:owner, Handle:hndl, const String:error[], any:data)
