@@ -91,7 +91,7 @@ new ismysql;
 new Handle:array_paints[MAX_LANGUAGES];
 new Handle:array_armas;
 
-#define DATA "7.0.1 private version"
+#define DATA "7.0.2 private version"
 
 //new String:base[64] = "weaponpaints";
 
@@ -390,35 +390,25 @@ public CallBack(QueryCookie:cookie, client, ConVarQueryResult:result, const Stri
 public Action:EventPlayerTeam(Handle:event, const String:name[], bool:dontBroadcast)
 {
 	new client = GetClientOfUserId(GetEventInt(event, "userid"));
-	
-	if(client > 0 && client <= MaxClients)
+
+	if(IsFakeClient(client) || chooset[client])
 	{
-		if(IsFakeClient(client))
-		{
-			return Plugin_Continue;
-		}
+		return;
 	}
 		
 	// refresh client channel after a delay to fix invalid memory access bug
-	CreateTimer(0.1, Timer_ClientLanguage, GetClientSerial(client), TIMER_FLAG_NO_MAPCHANGE);
-	return Plugin_Continue;
+	CreateTimer(0.1, Timer_ClientLanguage, GetClientUserId(client), TIMER_FLAG_NO_MAPCHANGE);
 }
 
-public Action:Timer_ClientLanguage(Handle:timer, any:serial)
+public Action:Timer_ClientLanguage(Handle:timer, int id)
 {
-	new client = GetClientFromSerial(serial);
+	int client = GetClientOfUserId(id);
 	
-	if (client)
+	if (client && IsClientInGame(client) && !chooset[client])
 	{
-		//if(!checked[client])
-		//{
-			clientlang[client] = GetClientLanguage(client);
-			CheckSteamID(client);
-			//checked[client] = true;
-		//}
+		clientlang[client] = GetClientLanguage(client);
+		CheckSteamID(client);
 	}
-
-	return Plugin_Stop;
 }
 
 public Action OnJoinTeam(int client, const char[] command, int args)
