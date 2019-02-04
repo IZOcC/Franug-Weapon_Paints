@@ -91,7 +91,7 @@ new ismysql;
 new Handle:array_paints[MAX_LANGUAGES];
 new Handle:array_armas;
 
-#define DATA "7.0.2 private version"
+#define DATA "7.3 private version"
 
 //new String:base[64] = "weaponpaints";
 
@@ -1035,6 +1035,9 @@ public DIDMenuHandler(Handle:menu, MenuAction:action, client, itemNum)
 
 ReadPaints(index_new)
 {
+	delete g_hTypesArray[index_new];
+	delete array_paints[index_new];
+	
 	g_hTypesArray[index_new] = CreateArray(32);
 	array_paints[index_new] = CreateArray(128);
 	char code[64], language[128];
@@ -1126,7 +1129,8 @@ ReadPaints(index_new)
 		char szType[128];
 		GetArrayString(g_hTypesArray[index_new], i, szType, sizeof(szType));
 		
-		g_hTypesMenu[index_new][i] = INVALID_HANDLE;
+		delete g_hTypesMenu[index_new][i];
+		
 		g_hTypesMenu[index_new][i] = CreateMenu(DIDMenuHandler);
 		SetMenuExitButton(g_hTypesMenu[index_new][i], true);
 		
