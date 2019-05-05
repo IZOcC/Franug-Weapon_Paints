@@ -91,7 +91,7 @@ new ismysql;
 new Handle:array_paints[MAX_LANGUAGES];
 new Handle:array_armas;
 
-#define DATA "7.3 private version"
+#define DATA "7.3.1 private version"
 
 //new String:base[64] = "weaponpaints";
 
@@ -1384,6 +1384,12 @@ public T_CheckSteamID(Handle:owner, Handle:hndl, const String:error[], any:data)
 		return;
 	}
 	
+	if(arbol[client] != INVALID_HANDLE)
+	{
+		ClearTrie(arbol[client]);
+		CloseHandle(arbol[client]);
+		arbol[client] = INVALID_HANDLE;
+	}
 	arbol[client] = CreateTrie();
 
 	new String:Items[64];
@@ -1578,6 +1584,13 @@ public tbasico3(Handle:owner, Handle:hndl, const String:error[], any:data)
 	if ((client = GetClientOfUserId(data)) == 0)
 	{
 		return;
+	}
+	
+	if(arbol[client] != INVALID_HANDLE)
+	{
+		ClearTrie(arbol[client]);
+		CloseHandle(arbol[client]);
+		arbol[client] = INVALID_HANDLE;
 	}
 	
 	arbol[client] = CreateTrie();
