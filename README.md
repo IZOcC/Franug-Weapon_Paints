@@ -7,7 +7,7 @@
 * You dont need to upload the .sp file
 * If you already use a old version. Remove your database content and start since 0
 * A example of a basic databases.cfg is http://pastebin.com/XqsEjPhS
-* If you want a !knife plugin you need to use the private knife version, if you still dont have it, then buy it from me (Franc1sco franug)
+* If you want a !knife plugin can use this https://github.com/Franc1sco/Franug-valve-knifes
 
 
 ##### Cvars (put in server.cfg)
