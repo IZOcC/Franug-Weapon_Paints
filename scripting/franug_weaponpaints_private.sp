@@ -37,7 +37,7 @@ new clientlang[MAXPLAYERS+1];
 
 //bool checked[MAXPLAYERS + 1];
 
-#define MAX_PAINTS 800
+#define MAX_PAINTS 950
 #define MAX_LANGUAGES 40
 #define MAX_TYPES 80
 
