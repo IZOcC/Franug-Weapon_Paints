@@ -91,7 +91,7 @@ new ismysql;
 new Handle:array_paints[MAX_LANGUAGES];
 new Handle:array_armas;
 
-#define DATA "7.5"
+#define DATA "7.5.1"
 
 //new String:base[64] = "weaponpaints";
 
